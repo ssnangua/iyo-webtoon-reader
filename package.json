@@ -1,0 +1,31 @@
+{
+  "name": "iyo-webtoon-reader",
+  "version": "1.0.0",
+  "description": "A simple local webtoon reader | 一个简单的本地条漫阅读器",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.js",
+    "build": "node scripts/build.js"
+  },
+  "keywords": [
+    "webtoon",
+    "manhwa",
+    "manga",
+    "comic",
+    "reader"
+  ],
+  "author": "ssnangua",
+  "license": "MPL-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ssnangua/iyo-webtoon-reader.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ssnangua/iyo-webtoon-reader/issues"
+  },
+  "homepage": "https://github.com/ssnangua/iyo-webtoon-reader#readme",
+  "devDependencies": {
+    "archiver": "^5.3.1",
+    "nw-builder": "^4.3.9"
+  }
+}

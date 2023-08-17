@@ -1,0 +1,266 @@
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+* {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+#app {
+  display: flex;
+  flex-flow: column;
+  overflow: hidden;
+}
+
+#main {
+  flex: auto;
+  overflow: auto;
+}
+#main::-webkit-scrollbar {
+  display: none;
+}
+#images {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+img {
+  display: block;
+  position: relative;
+  image-rendering: -webkit-optimize-contrast;
+}
+/* img:hover {
+  opacity: 0.8;
+} */
+
+#toolbar {
+  width: 100%;
+  height: 20px;
+  flex-shrink: 0;
+  background-color: #f0f0f0;
+  display: flex;
+  flex: row nowrap;
+  line-height: 20px;
+  position: relative;
+}
+.no-image #toolbar {
+  pointer-events: none;
+}
+#canvas {
+  margin: 0 10px;
+}
+#handler,
+#handler-preview {
+  position: absolute;
+  width: 0;
+  height: 100%;
+  border-left: solid 2px #f00;
+  pointer-events: none;
+}
+#handler-preview {
+  opacity: 0.2;
+  display: none;
+}
+.no-handler #handler {
+  display: none;
+}
+.no-handler #page {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+#tooltip {
+  display: none;
+  position: fixed;
+  bottom: 22px;
+  background-color: #ffffe1;
+  border: solid 1px #fff;
+}
+.tip #tooltip,
+.tip #handler-preview {
+  display: block;
+}
+
+#zoomtool,
+#pagination {
+  display: flex;
+  flex-flow: row;
+}
+#zoomtool {
+  width: 80px;
+}
+#pagination {
+  width: 160px;
+}
+#othertool {
+  margin-left: 10px;
+  width: 40px;
+}
+#zoom,
+#page {
+  flex: auto;
+  text-align: center;
+  cursor: text;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#zoom-input,
+#page-input {
+  display: none;
+  flex: auto;
+  text-align: center;
+  min-width: 0;
+  outline: none;
+}
+#zoomtool.input #zoom,
+#pagination.input #page {
+  display: none;
+}
+#zoomtool.input #zoom-input,
+#pagination.input #page-input {
+  display: block;
+}
+
+.iconfont:hover {
+  background-color: #ccc;
+}
+.iconfont.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.fullscreen #toolbar {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  opacity: 0.0001;
+}
+.fullscreen #toolbar:hover {
+  opacity: 1;
+}
+#btn-leavefullscreen {
+  display: none;
+}
+.fullscreen #btn-fullscreen {
+  display: none;
+}
+.fullscreen #btn-leavefullscreen {
+  display: initial;
+}
+
+.dialog-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: calc(100vw - 20px);
+  max-height: calc(100vh - 20px);
+  background-color: #fff;
+  border-radius: 2px;
+  display: flex;
+  flex-flow: column;
+  overflow: hidden;
+}
+.dialog-header {
+  flex-shrink: 0;
+  height: 20px;
+  padding: 20px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  line-height: 20px;
+}
+.dialog-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+.dialog-body {
+  padding: 0 20px;
+  flex: auto;
+  overflow: auto;
+}
+.dialog-footer {
+  min-height: 20px;
+  flex-shrink: 0;
+  padding: 20px;
+  text-align: right;
+}
+
+#setting tr > td:first-child {
+  text-align: right;
+  padding-right: 10px;
+}
+
+.tag-group {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 5px 0;
+}
+.tag-group,
+.tag-item {
+  display: flex;
+  flex-flow: row nowrap;
+}
+.tag-item {
+  margin-left: 20px;
+}
+.tag-group:hover,
+.tag-item:hover {
+  background-color: #f0f0f0;
+}
+.tag-group-name,
+.tag-info {
+  flex: auto;
+  overflow: hidden;
+  padding: 5px;
+}
+.tag-info {
+  font-size: 12px;
+}
+.tag-page {
+  color: #e6a23c;
+}
+.tag-delete {
+  display: none;
+  align-items: center;
+  padding: 0 10px;
+}
+.tag-group:hover .tag-delete,
+.tag-item:hover .tag-delete {
+  display: flex;
+}
+.tag-delete:hover {
+  background-color: #ccc;
+}
+.tag-comment {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tag-delete > span {
+  pointer-events: none;
+}
+
+.nodata {
+  padding: 20px;
+  pointer-events: none;
+  font-style: italic;
+  opacity: 0.5;
+  text-align: center;
+}

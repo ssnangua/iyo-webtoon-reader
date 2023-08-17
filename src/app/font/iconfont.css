@@ -1,0 +1,71 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 4212285 */
+  src: url('iconfont.woff2?t=1692224144198') format('woff2'),
+       url('iconfont.woff?t=1692224144198') format('woff'),
+       url('iconfont.ttf?t=1692224144198') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-delete:before {
+  content: "\e7ff";
+}
+
+.icon-zoomin:before {
+  content: "\e7f5";
+}
+
+.icon-close:before {
+  content: "\e7f6";
+}
+
+.icon-zoomout:before {
+  content: "\e7f7";
+}
+
+.icon-tag1:before {
+  content: "\e82c";
+}
+
+.icon-leavefullscreen:before {
+  content: "\e826";
+}
+
+.icon-next:before {
+  content: "\e7f9";
+}
+
+.icon-prev:before {
+  content: "\e7fa";
+}
+
+.icon-first:before {
+  content: "\e7fb";
+}
+
+.icon-last:before {
+  content: "\e7fc";
+}
+
+.icon-minus:before {
+  content: "\e7fd";
+}
+
+.icon-plus:before {
+  content: "\e7fe";
+}
+
+.icon-tag:before {
+  content: "\e806";
+}
+
+.icon-fullscreen:before {
+  content: "\e824";
+}
+

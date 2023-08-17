@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iYo Webtoon Reader</title>
+  <link rel="stylesheet" href="font/iconfont.css">
+  <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+  <div id="app">
+    <div id="main">
+      <div id="images"></div>
+    </div>
+    <div id="toolbar" class="disabled">
+      <div id="zoomtool">
+        <span id="btn-zoomout" lang-title="toolbar.zoomout" class="iconfont icon-minus"></span>
+        <span id="zoom">100%</span>
+        <input id="zoom-input" type="text">
+        <span id="btn-zoomin" lang-title="toolbar.zoomin" class="iconfont icon-plus"></span>
+      </div>
+      <canvas id="canvas"></canvas>
+      <div id="handler-preview"></div>
+      <div id="handler"></div>
+      <div id="tooltip"></div>
+      <div id="pagination">
+        <span id="btn-first" lang-title="toolbar.first" class="iconfont icon-first"></span>
+        <span id="btn-prev" lang-title="toolbar.prev" class="iconfont icon-prev"></span>
+        <span id="page">*/*</span>
+        <input id="page-input" type="text">
+        <span id="btn-next" lang-title="toolbar.next" class="iconfont icon-next"></span>
+        <span id="btn-last" lang-title="toolbar.last" class="iconfont icon-last"></span>
+      </div>
+      <div id="othertool">
+        <span id="btn-tag" lang-title="toolbar.tag" class="iconfont icon-tag"></span>
+        <span id="btn-fullscreen" lang-title="toolbar.fullscreen" class="iconfont icon-fullscreen"></span>
+        <span id="btn-leavefullscreen" lang-title="toolbar.leavefullscreen"
+          class="iconfont icon-leavefullscreen"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog-modal" id="setting">
+    <div class="dialog">
+      <div class="dialog-header">
+        <span class="dialog-title" lang-text="setting.title"></span>
+        <span class="dialog-close iconfont icon-close"></span>
+      </div>
+      <div class="dialog-body">
+        <table>
+          <tr>
+            <td><label for="auto-load-history" lang-text="setting.autoLoadHistory"></label></td>
+            <td><input id="auto-load-history" type="checkbox"></td>
+          </tr>
+          <tr>
+            <td><label for="read-subfolder" lang-text="setting.readSubfolder"></label></td>
+            <td><input id="read-subfolder" type="checkbox"></td>
+          </tr>
+          <tr>
+            <td><label for="background-color" lang-text="setting.backgroundColor"></label></td>
+            <td><input id="background-color" type="color"></td>
+          </tr>
+          <tr>
+            <td><label for="history-count" lang-text="setting.historyCount"></label></td>
+            <td><input id="history-count" type="number" min="0" max="100" step="1"></td>
+          </tr>
+        </table>
+      </div>
+      <div class="dialog-footer">
+        <button id="setting-ok" lang-text="setting.ok"></button>
+        <button id="setting-cancel" lang-text="setting.cancel"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog-modal" id="tags">
+    <div class="dialog" style="width: 80%;">
+      <div class="dialog-header">
+        <span class="dialog-title" lang-text="tags.title"></span>
+        <span class="dialog-close iconfont icon-close"></span>
+      </div>
+      <div class="dialog-body">
+        <div id="tags-list"></div>
+      </div>
+      <div class="dialog-footer">
+        <button id="tags-clear" lang-text="tags.clear"></button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="index.js"></script>
+</body>
+
+</html>

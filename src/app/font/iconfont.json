@@ -1,0 +1,107 @@
+{
+  "id": "4212285",
+  "name": "webtoon-reader",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1917127",
+      "name": "删除",
+      "font_class": "delete",
+      "unicode": "e7ff",
+      "unicode_decimal": 59391
+    },
+    {
+      "icon_id": "1917110",
+      "name": "放大",
+      "font_class": "zoomin",
+      "unicode": "e7f5",
+      "unicode_decimal": 59381
+    },
+    {
+      "icon_id": "1917112",
+      "name": "错误",
+      "font_class": "close",
+      "unicode": "e7f6",
+      "unicode_decimal": 59382
+    },
+    {
+      "icon_id": "1917115",
+      "name": "缩小",
+      "font_class": "zoomout",
+      "unicode": "e7f7",
+      "unicode_decimal": 59383
+    },
+    {
+      "icon_id": "5127547",
+      "name": "tag",
+      "font_class": "tag1",
+      "unicode": "e82c",
+      "unicode_decimal": 59436
+    },
+    {
+      "icon_id": "2357038",
+      "name": "收起",
+      "font_class": "leavefullscreen",
+      "unicode": "e826",
+      "unicode_decimal": 59430
+    },
+    {
+      "icon_id": "1917118",
+      "name": "右",
+      "font_class": "next",
+      "unicode": "e7f9",
+      "unicode_decimal": 59385
+    },
+    {
+      "icon_id": "1917119",
+      "name": "左",
+      "font_class": "prev",
+      "unicode": "e7fa",
+      "unicode_decimal": 59386
+    },
+    {
+      "icon_id": "1917121",
+      "name": "首页",
+      "font_class": "first",
+      "unicode": "e7fb",
+      "unicode_decimal": 59387
+    },
+    {
+      "icon_id": "1917122",
+      "name": "末页",
+      "font_class": "last",
+      "unicode": "e7fc",
+      "unicode_decimal": 59388
+    },
+    {
+      "icon_id": "1917123",
+      "name": "减去",
+      "font_class": "minus",
+      "unicode": "e7fd",
+      "unicode_decimal": 59389
+    },
+    {
+      "icon_id": "1917126",
+      "name": "添加",
+      "font_class": "plus",
+      "unicode": "e7fe",
+      "unicode_decimal": 59390
+    },
+    {
+      "icon_id": "1917143",
+      "name": "标签",
+      "font_class": "tag",
+      "unicode": "e806",
+      "unicode_decimal": 59398
+    },
+    {
+      "icon_id": "2356560",
+      "name": "全屏",
+      "font_class": "fullscreen",
+      "unicode": "e824",
+      "unicode_decimal": 59428
+    }
+  ]
+}

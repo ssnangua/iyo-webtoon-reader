@@ -1,7 +1,7 @@
 import model from "./model.js";
 import menubar from "./menubar.js";
 
-let _onIndexChange, _onZoomChange, _onAddTag;
+let _onIndexChange, _onZoomChange, _onAddTag, _onShowTags;
 
 const $ = (s) => document.querySelector(s);
 
@@ -185,7 +185,13 @@ $zoomInput.addEventListener("change", () => {
 });
 
 // 标签
-$("#btn-tag").addEventListener("click", () => _onAddTag());
+const $tag = $("#btn-tag");
+$tag.addEventListener("click", () => _onAddTag());
+$tag.addEventListener("contextmenu", (e) => {
+  e.preventDefault();
+  _onShowTags();
+  return false;
+});
 
 // 全屏
 const win = nw.Window.get();
@@ -218,6 +224,7 @@ export default {
   onIndexChange: (callback) => (_onIndexChange = callback),
   onZoomChange: (callback) => (_onZoomChange = callback),
   onAddTag: (callback) => (_onAddTag = callback),
+  onShowTags: (callback) => (_onShowTags = callback),
   updateSize,
   updateTotal,
   updateIndex,

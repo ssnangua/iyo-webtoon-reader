@@ -4,7 +4,7 @@ document.querySelectorAll(".dialog-close").forEach((btn) => {
   });
 });
 
-export default {
+const dialog = {
   open(selector) {
     this.closeAll();
     document.querySelector(selector).style.display = "block";
@@ -18,3 +18,9 @@ export default {
     });
   },
 };
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") dialog.closeAll();
+});
+
+export default dialog;

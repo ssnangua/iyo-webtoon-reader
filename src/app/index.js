@@ -6,16 +6,29 @@ import menubar from "./menubar.js";
 import "./dialog.js";
 import setting from "./setting.js";
 import tags from "./tags.js";
-import { locale, $t } from "./language.js";
+import { $t } from "./language.js";
 
 const path = require("path");
 const fs = require("fs");
 const url = require("url");
 
+function applyStorage(key) {
+  switch (key) {
+    case "locale":
+      onLocaleChange();
+      break;
+    // case "setting": break;
+    case "history":
+      menubar.init();
+      break;
+    // case "tags": break;
+  }
+}
+model.onStorageChange(applyStorage);
+
 // 多语言
-function onLocaleChange(newLocale) {
-  locale(newLocale);
-  resetTitle();
+function onLocaleChange() {
+  updateTitle();
   menubar.init();
   document.querySelectorAll("[lang-title]").forEach((el) => {
     const key = el.getAttribute("lang-title");
@@ -26,32 +39,54 @@ function onLocaleChange(newLocale) {
     el.innerText = $t(key);
   });
 }
-onLocaleChange(locale());
-menubar.onLocaleChange(onLocaleChange);
+onLocaleChange();
 
 // 设置
 function applySetting(setting) {
-  model.setting = setting;
-  document.body.style.backgroundColor = setting.backgroundColor;
+  document.body.style.backgroundColor = model.setting.backgroundColor;
+  applyStorage("setting");
 }
 applySetting(model.setting);
-setting.onChange(applySetting);
+setting.onChange(() => {
+  model.setting = setting;
+  applySetting();
+});
 
 // 菜单栏
-menubar.onOpen((path) => {
-  const history = model.findHistory(path) || { path, index: 0 };
-  loadPath(history.path, history.index);
+menubar.onMenuItemClick((key, data) => {
+  switch (key) {
+    case "language":
+      model.locale = data;
+      onLocaleChange();
+      break;
+    case "open":
+      const history = model.findHistory(data) || { path: data, index: 0 };
+      loadPath(history.path, history.index);
+      break;
+    case "addTag":
+      onAddTag();
+      break;
+    case "showTagList":
+      tags.show();
+      break;
+    case "loadHistory":
+      loadPath(data.path, data.index);
+      break;
+    case "showSetting":
+      setting.show();
+      break;
+  }
 });
-menubar.onLoadHistory(loadPath);
 
 // 标题
-function resetTitle() {
-  document.title = `${$t("appName")} - ${nw.App.manifest.version}`;
-}
 function updateTitle() {
-  const image = model.images[model.index];
-  document.title = `${model.index + 1}/${model.total}: 
-    ${image.name} <${image.folder}>`;
+  if (model.index === -1) {
+    document.title = `${$t("appName")} - ${nw.App.manifest.version}`;
+  } else {
+    const image = model.images[model.index];
+    document.title = `${model.index + 1}/${model.total}: 
+      ${image.name} <${image.folder}>`;
+  }
 }
 
 // 图片
@@ -73,6 +108,33 @@ toolbar.onZoomChange((zoom) => {
   const { minZoom, maxZoom } = model.setting;
   model.zoom = Math.max(minZoom, Math.min(maxZoom, zoom));
   images.updateZoom();
+});
+// 标签
+function onAddTag() {
+  const comment = prompt($t("tags.comment"));
+  if (typeof comment === "string") {
+    model.addTag({
+      path: model.rootPath,
+      index: model.index,
+      total: model.total,
+      comment,
+    });
+  }
+  tags.update();
+}
+toolbar.onShowTags(() => tags.show());
+toolbar.onAddTag(onAddTag);
+tags.onLoadTag((group, index) => {
+  const tag = model.tags[group][index];
+  loadPath(tag.path, tag.index);
+});
+tags.onDeleteTag((group, index) => {
+  model.deleteTag(group, index);
+  tags.update();
+});
+tags.onClearTags(() => {
+  model.clearTags();
+  tags.update();
 });
 
 // 窗口尺寸变更
@@ -122,8 +184,7 @@ async function loadIndex(index) {
   model.index = index;
   await images.loadIndex(index);
   toolbar.updateIndex();
-  if (index === -1) resetTitle();
-  else updateTitle();
+  updateTitle();
 }
 
 // 加载指定路径
@@ -141,9 +202,9 @@ async function loadPath(path, index) {
 
   zip.closeAll();
   model.images = [];
+  loadIndex(-1);
   document.body.classList.add("no-image");
   toolbar.updateTotal();
-  loadIndex(-1);
 
   const _images = await getImages([path]);
   if (_images.length > 0) {
@@ -156,32 +217,6 @@ async function loadPath(path, index) {
 
   menubar.init();
 }
-
-// 标签
-toolbar.onAddTag(() => {
-  const comment = prompt($t("tags.comment"));
-  if (comment) {
-    model.addTag({
-      path: model.rootPath,
-      index: model.index,
-      total: model.total,
-      comment,
-    });
-  }
-  tags.update();
-});
-tags.onLoadTag((group, index) => {
-  const tag = model.tags[group][index];
-  loadPath(tag.path, tag.index);
-});
-tags.onDeleteTag((group, index) => {
-  model.deleteTag(group, index);
-  tags.update();
-});
-tags.onClearTags(() => {
-  model.clearTags();
-  tags.update();
-});
 
 // 文件拖放
 const preventDefault = (e) => {
@@ -202,17 +237,22 @@ window.addEventListener("drop", (e) => {
   }
 });
 
-nw.Window.get().on("close", function () {
-  this.hide();
-  if (model.total > 0) {
-    model.addHistory({ path: model.rootPath, index: model.index });
-  }
-  this.close(true);
-});
-
-if (model.setting.autoLoadHistory) {
+// 自动打开上次关闭时的记录
+if (location.search === "?id=1" && model.setting.autoLoadHistory) {
   setTimeout(() => {
     const history = model.history[0];
     if (history) loadPath(history.path, history.index);
   }, 0);
 }
+
+// 关闭窗口前的操作
+nw.Window.get().on("close", function () {
+  this.hide();
+  if (model.total > 0) {
+    zip.closeAll();
+    if (model.total > 0) {
+      model.addHistory({ path: model.rootPath, index: model.index });
+    }
+  }
+  this.close(true);
+});

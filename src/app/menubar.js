@@ -1,13 +1,10 @@
-import { messages, locale, $t } from "./language.js";
+import { messages, $t } from "./language.js";
 import model from "./model.js";
-import dialog from "./dialog.js";
-import setting from "./setting.js";
-import tags from "./tags.js";
 
 const os = require("os");
 const path = require("path");
 
-let _onLocaleChange, _onOpen, _onLoadHistory;
+let _onMenuItemClick;
 
 const win = nw.Window.get();
 let menubar;
@@ -19,7 +16,7 @@ function init() {
 
 const input = document.createElement("input");
 input.setAttribute("type", "file");
-input.addEventListener("change", () => _onOpen(input.value));
+input.addEventListener("change", () => _onMenuItemClick("open", input.value));
 
 function createMenu(items, option = { type: "contextmenu" }) {
   const menu = new nw.Menu(option);
@@ -36,7 +33,9 @@ function createHistorySubmenu() {
         .map((item, index) => {
           return {
             label: `${index + 1}: ${path.basename(item.path)}`,
-            click: () => _onLoadHistory(item.path, item.index),
+            click() {
+              _onMenuItemClick("loadHistory", item);
+            },
           };
         })
         .concat([
@@ -51,7 +50,7 @@ function createHistorySubmenu() {
         ])
     );
   } else {
-    return createMenu([{ label: $t("menubar.file.empty"), enabled: false }]);
+    return createMenu([{ label: $t("empty"), enabled: false }]);
   }
 }
 
@@ -85,13 +84,22 @@ function createMenubar() {
             type: "separator",
           },
           {
-            label: $t("menubar.file.tags"),
+            label: $t("menubar.file.addTag"),
+            key: "t",
+            click() {
+              _onMenuItemClick("addTag");
+            },
+          },
+          {
+            label: $t("menubar.file.showTagList"),
             key: "t",
             modifiers: "ctrl",
             click() {
-              tags.update();
-              dialog.open("#tags");
+              _onMenuItemClick("showTagList");
             },
+          },
+          {
+            type: "separator",
           },
           {
             label: $t("menubar.file.history"),
@@ -104,8 +112,7 @@ function createMenubar() {
             label: $t("menubar.file.setting"),
             key: "F5",
             click() {
-              setting.update();
-              dialog.open("#setting");
+              _onMenuItemClick("showSetting");
             },
           },
           {
@@ -125,8 +132,8 @@ function createMenubar() {
             return {
               label: message.languageName,
               type: "checkbox",
-              checked: lang === locale(),
-              click: () => _onLocaleChange(lang),
+              checked: lang === model.locale,
+              click: () => _onMenuItemClick("language", lang),
             };
           })
         ),
@@ -173,9 +180,7 @@ function createMenubar() {
 
 export default {
   init,
-  onLocaleChange: (callback) => (_onLocaleChange = callback),
-  onOpen: (callback) => (_onOpen = callback),
-  onLoadHistory: (callback) => (_onLoadHistory = callback),
+  onMenuItemClick: (callback) => (_onMenuItemClick = callback),
   show: () => (win.menu = menubar),
   hide: () => (win.menu = null),
 };

@@ -1,3 +1,5 @@
+let _onStorageChange;
+
 function getStorage(key, defaultValue) {
   return localStorage[key] ? JSON.parse(localStorage[key]) : defaultValue;
 }
@@ -5,20 +7,61 @@ function setStorage(key, value) {
   localStorage[key] = JSON.stringify(value);
 }
 
-let _setting = Object.assign(
-  {
-    locale: navigator.language || process.env.VUE_APP_I18N_LOCALE || "en",
-    minZoom: 0.25,
-    maxZoom: 4,
-    autoLoadHistory: true,
-    readSubfolder: true,
-    backgroundColor: "#000000",
-    historyCount: 10,
-  },
-  getStorage("setting", {})
-);
-let _history = getStorage("history", []);
-let _tags = getStorage("tags", {});
+class StorageItem {
+  #data;
+  constructor(key, defaultData, initData) {
+    this.key = key;
+    this.defaultData = defaultData;
+    this.initData = initData;
+    this.init();
+  }
+  get data() {
+    return this.#data;
+  }
+  set data(newData) {
+    this.#data = newData;
+  }
+  init() {
+    this.#data = Object.assign(
+      JSON.parse(JSON.stringify(this.initData)),
+      getStorage(this.key, this.defaultData)
+    );
+  }
+  save() {
+    setStorage(this.key, this.#data);
+  }
+}
+
+const storage = {
+  locale: new StorageItem(
+    "locale",
+    {},
+    {
+      value: navigator.language || process.env.VUE_APP_I18N_LOCALE || "en",
+    }
+  ),
+  setting: new StorageItem(
+    "setting",
+    {},
+    {
+      minZoom: 0.25,
+      maxZoom: 4,
+      autoLoadHistory: true,
+      readSubfolder: true,
+      backgroundColor: "#000000",
+      historyCount: 10,
+    }
+  ),
+  history: new StorageItem("history", [], []),
+  tags: new StorageItem("tags", {}, {}),
+};
+
+window.addEventListener("storage", ({ key }) => {
+  storage[key].init();
+  _onStorageChange(key);
+});
+
+const { locale, setting, history, tags } = storage;
 
 export default {
   zoom: 1,
@@ -31,55 +74,67 @@ export default {
     return this.images.length;
   },
 
+  onStorageChange: (callback) => (_onStorageChange = callback),
+
+  // 语言
+  get locale() {
+    return locale.data.value;
+  },
+  set locale(newLocale) {
+    locale.data.value = newLocale;
+    locale.save();
+  },
+
   // 设置
   get setting() {
-    return _setting;
+    return setting.data;
   },
-  set setting(obj) {
-    _setting = obj;
-    setStorage("setting", _setting);
+  set setting(newSetting) {
+    setting.data = newSetting;
+    setting.save();
   },
 
   // 历史
   get history() {
-    return _history;
+    return history.data;
   },
   findHistory(path) {
-    return _history.find((item) => item.path === path);
+    return history.data.find((item) => item.path === path);
   },
   addHistory(newItem) {
-    const oldIndex = _history.findIndex((item) => item.path === newItem.path);
-    if (oldIndex !== -1) _history.splice(oldIndex, 1);
-    _history.unshift(newItem);
-    _history = _history.slice(0, _setting.historyCount);
-    setStorage("history", _history);
+    const { data } = history;
+    const oldIndex = data.findIndex((item) => item.path === newItem.path);
+    if (oldIndex !== -1) data.splice(oldIndex, 1);
+    data.unshift(newItem);
+    history.data = data.slice(0, setting.data.historyCount);
+    history.save();
   },
   clearHistory() {
-    _history = [];
-    setStorage("history", _history);
+    history.data = [];
+    history.save();
   },
 
   // 标签
   get tags() {
-    return _tags;
+    return tags.data;
   },
   addTag(item) {
     const group = item.path;
-    if (!_tags[group]) _tags[group] = [];
-    _tags[group].push(item);
-    setStorage("tags", _tags);
+    if (!tags.data[group]) tags.data[group] = [];
+    tags.data[group].push(item);
+    tags.save();
   },
   deleteTag(group, index) {
     if (index !== undefined) {
-      _tags[group].splice(index, 1);
-      if (_tags[group].length === 0) delete _tags[group];
+      tags.data[group].splice(index, 1);
+      if (tags.data[group].length === 0) delete tags.data[group];
     } else {
-      delete _tags[group];
+      delete tags.data[group];
     }
-    setStorage("tags", _tags);
+    tags.save();
   },
   clearTags() {
-    _tags = {};
-    setStorage("tags", _tags);
+    tags.data = {};
+    tags.save();
   },
 };

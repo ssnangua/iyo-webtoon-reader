@@ -9,9 +9,9 @@ export const messages = {
         file: "File",
         openZipFile: "Open *.zip File",
         openFolder: "Open Folder",
-        tags: "Tags",
+        addTag: "Add Tag",
+        showTagList: "Show Tag List",
         history: "History",
-        empty: "(Empty)",
         clear: "Clear",
         setting: "Setting",
         exit: "Exit",
@@ -60,6 +60,7 @@ export const messages = {
     },
     notExist: "Path does not exist",
     nodata: "No data",
+    empty: "(Empty)",
   },
 
   "zh-CN": {
@@ -70,9 +71,9 @@ export const messages = {
         file: "文件",
         openZipFile: "打开 *.zip 文件",
         openFolder: "打开文件夹",
-        tags: "标签",
+        addTag: "添加标签",
+        showTagList: "显示标签列表",
         history: "历史",
-        empty: "(空)",
         clear: "清空",
         setting: "设置",
         exit: "退出",
@@ -122,21 +123,12 @@ export const messages = {
     },
     notExist: "路径不存在",
     nodata: "无数据",
+    empty: "(空)",
   },
 };
 
-let _locale = model.setting.locale;
-
-export function locale(locale) {
-  if (locale) {
-    _locale = locale;
-    model.setting = { ...model.setting, locale };
-  }
-  return _locale;
-}
-
 export function $t(key) {
-  let v = messages[_locale];
+  let v = messages[model.locale];
   key.split(".").forEach((k) => {
     v = typeof v === "object" && v ? v[k] : undefined;
   });

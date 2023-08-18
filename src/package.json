@@ -2,15 +2,7 @@
   "name": "iyo-webtoon-reader",
   "version": "1.0.0",
   "description": "A simple local webtoon reader | 一个简单的本地条漫阅读器",
-  "main": "app/index.html",
-  "window": {
-    "id": "iyo-webtoon-reader",
-    "width": 800,
-    "height": 600,
-    "icon": "app/icon.png",
-    "min_width": 600,
-    "min_height": 400
-  },
+  "main": "app/main.js",
   "//chromium-args": "--force-device-scale-factor=1",
   "keywords": [
     "webtoon",

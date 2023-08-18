@@ -40,4 +40,8 @@ $("#setting-cancel").addEventListener("click", () => {
 export default {
   onChange: (callback) => (_onChange = callback),
   update,
+  show() {
+    update();
+    dialog.open("#setting");
+  },
 };

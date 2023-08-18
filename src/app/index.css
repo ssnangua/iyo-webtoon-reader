@@ -220,7 +220,6 @@ img {
 .tag-item {
   margin-left: 20px;
 }
-.tag-group:hover,
 .tag-item:hover {
   background-color: #f0f0f0;
 }
@@ -252,6 +251,10 @@ img {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.no-comment {
+  font-style: italic;
+  opacity: 0.5;
 }
 .tag-delete > span {
   pointer-events: none;

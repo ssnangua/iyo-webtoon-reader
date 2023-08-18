@@ -26,13 +26,18 @@ function update() {
               </div>` +
               items
                 .map((item, index) => {
+                  const comment = item.comment
+                    ? `<span title="${item.comment}">${item.comment}</span>`
+                    : `<span class="no-comment" lang-text="empty">${$t(
+                        "empty"
+                      )}</span>`;
                   return `<div class="tag-item" data-group="${group}" data-index="${index}">
                     <div class="tag-info">
                       <div class="tag-comment">
                         <span class="tag-page">
                           ${item.index + 1}/${item.total}: 
                         </span>
-                        <span title="${item.comment}">${item.comment}</span>
+                        ${comment}
                       </div>
                     </div>
                     <div class="tag-delete">
@@ -68,6 +73,10 @@ $("#tags-clear").addEventListener("click", () => _onClearTags());
 
 export default {
   update,
+  show() {
+    update();
+    dialog.open("#tags");
+  },
   onLoadTag: (callback) => (_onLoadTag = callback),
   onDeleteTag: (callback) => (_onDeleteTag = callback),
   onClearTags: (callback) => (_onClearTags = callback),

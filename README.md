@@ -35,3 +35,5 @@ npm run dev
 # 构建
 npm run build
 ```
+
+如果构建生成的 exe 文件图标在某些尺寸下不清晰，是构建工具 [nw-builder](https://nwutils.io/nw-builder/api-win.html#winrc-object) 的问题，可以用 [ResourceHacker](http://www.angusj.com/resourcehacker/) 手动替换下。

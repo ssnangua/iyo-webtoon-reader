@@ -17,7 +17,7 @@ nwbuild({
   cacheDir: "./cache",
   srcDir: "./src",
   outDir: `./out/${buildName}`,
-  zip: true,
+  // zip: true,
   glob: false,
   cache: true,
   ffmpeg: false,

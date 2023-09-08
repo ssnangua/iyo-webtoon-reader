@@ -4,7 +4,7 @@ A simple local webtoon reader | 一个简单的本地条漫阅读器
 
 <img src="./screenshot.jpg" width="300px">
 
-[下载](https://github.com/ssnangua/iyo-webtoon-reader/releases)
+[下载](https://github.com/ssnangua/iyo-webtoon-reader/releases) ([百度网盘](https://pan.baidu.com/s/104NeM6VPqeBJFMNoLP6fjA?pwd=0t2s))
 
 ## 特性介绍
 

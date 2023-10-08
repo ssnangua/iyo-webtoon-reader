@@ -4,8 +4,13 @@ let _onIndexChange;
 
 let firstIndex, curIndex, lastIndex;
 
-const $main = document.querySelector("#main");
+const $imagesContainer = document.querySelector("#images-container");
 const $images = document.querySelector("#images");
+
+$images.addEventListener("mousewheel", (e) => {
+  $imagesContainer.scrollTop +=
+    model.setting.scrollDelta * (e.deltaY > 0 ? 1 : -1);
+});
 
 // 加载图片
 async function loadImage(index) {
@@ -55,7 +60,7 @@ async function loadIndex(index) {
     const first = await loadImage(firstIndex);
     $images.insertBefore(first, cur);
     // 滚动到当前页位置
-    $main.scrollTop = first.offsetHeight + 1;
+    $imagesContainer.scrollTop = first.offsetHeight + 1;
   }
 
   await autoLoad();
@@ -66,7 +71,7 @@ async function loadIndex(index) {
 // 确保图片的总高度大于容器的高度（可以出现滚动条），避免无法触发滚动加载事件
 async function autoLoad() {
   while (
-    $images.offsetHeight * model.zoom < $main.offsetHeight &&
+    $images.offsetHeight * model.zoom < $imagesContainer.offsetHeight &&
     lastIndex < model.total - 1
   ) {
     const last = await loadImage(++lastIndex);
@@ -76,7 +81,7 @@ async function autoLoad() {
 
 // 滚动
 let timer = -1;
-$main.addEventListener("scroll", () => {
+$imagesContainer.addEventListener("scroll", () => {
   if (loading) return;
   clearTimeout(timer);
   timer = setTimeout(async () => {
@@ -84,15 +89,15 @@ $main.addEventListener("scroll", () => {
     if (imgs.length === 0) return;
 
     // 加载上一页
-    if ($main.scrollTop < imgs[0].offsetHeight && firstIndex > 0) {
+    if ($imagesContainer.scrollTop < imgs[0].offsetHeight && firstIndex > 0) {
       const first = await loadImage(--firstIndex);
       $images.insertBefore(first, $images.firstChild);
     }
 
     // 加载下一页
     if (
-      $main.scrollTop + $main.offsetHeight >
-        $main.scrollHeight - imgs[imgs.length - 1].offsetHeight &&
+      $imagesContainer.scrollTop + $imagesContainer.offsetHeight >
+        $imagesContainer.scrollHeight - imgs[imgs.length - 1].offsetHeight &&
       lastIndex < model.total - 1
     ) {
       const last = await loadImage(++lastIndex);
@@ -116,10 +121,10 @@ $main.addEventListener("scroll", () => {
 
 // 更新缩放比例
 async function updateZoom() {
-  const scrollTop = $main.scrollTop / model.zoom;
-  $main.style.zoom = model.zoom;
+  const scrollTop = $imagesContainer.scrollTop / model.zoom;
+  $imagesContainer.style.zoom = model.zoom;
   await autoLoad();
-  $main.scrollTop = scrollTop * model.zoom;
+  $imagesContainer.scrollTop = scrollTop * model.zoom;
 }
 
 export default {

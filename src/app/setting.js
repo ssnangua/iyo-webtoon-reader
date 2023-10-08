@@ -1,31 +1,44 @@
-import dialog from "./dialog.js";
 import model from "./model.js";
+import { $, dialog } from "./util.js";
 
 let _onChange;
 
-const $ = (s) => document.querySelector(s);
+const $settingDialog = $("#setting-dialog");
+const $scrollDelta = $("#scroll-delta");
 const $autoLoadHistory = $("#auto-load-history");
 const $readSubfolder = $("#read-subfolder");
 const $backgroundColor = $("#background-color");
 const $historyCount = $("#history-count");
 
 function update() {
-  const { autoLoadHistory, readSubfolder, backgroundColor, historyCount } =
-    model.setting;
+  const {
+    scrollDelta,
+    autoLoadHistory,
+    readSubfolder,
+    backgroundColor,
+    historyCount,
+  } = model.setting;
+  $scrollDelta.value = scrollDelta;
   $autoLoadHistory.checked = autoLoadHistory;
   $readSubfolder.checked = readSubfolder;
   $backgroundColor.value = backgroundColor;
   $historyCount.value = historyCount;
 }
 
-$historyCount.addEventListener("change", () => {
-  const value = Math.min(100, Math.max(0, parseInt($historyCount.value)));
-  if (value !== $historyCount.value) $historyCount.value = value;
-});
+function forceInt($input) {
+  $input.addEventListener("change", () => {
+    let value = parseInt($input.value);
+    if ($input.min) value = Math.max(parseInt($input.min), value);
+    if ($input.max) value = Math.min(parseInt($input.max), value);
+    if (value !== $input.value) $input.value = value;
+  });
+}
+forceInt($scrollDelta);
+forceInt($historyCount);
 
 $("#setting-ok").addEventListener("click", () => {
-  dialog.close("#setting");
   const setting = {
+    scrollDelta: parseInt($scrollDelta.value),
     autoLoadHistory: $autoLoadHistory.checked,
     readSubfolder: $readSubfolder.checked,
     backgroundColor: $backgroundColor.value,
@@ -33,15 +46,16 @@ $("#setting-ok").addEventListener("click", () => {
   };
   _onChange(setting);
 });
-$("#setting-cancel").addEventListener("click", () => {
-  dialog.close("#setting");
-});
 
 export default {
   onChange: (callback) => (_onChange = callback),
   update,
-  show() {
-    update();
-    dialog.open("#setting");
+  toggle() {
+    if (dialog.isOpen($settingDialog)) {
+      dialog.close($settingDialog);
+    } else {
+      update();
+      dialog.open($settingDialog);
+    }
   },
 };

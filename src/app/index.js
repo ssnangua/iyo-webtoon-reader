@@ -3,7 +3,6 @@ import zip from "./zip.js";
 import images from "./images.js";
 import toolbar from "./toolbar.js";
 import menubar from "./menubar.js";
-import "./dialog.js";
 import setting from "./setting.js";
 import tags from "./tags.js";
 import { $t } from "./language.js";
@@ -21,7 +20,6 @@ function applyStorage(key) {
     case "history":
       menubar.init();
       break;
-    // case "tags": break;
   }
 }
 model.onStorageChange(applyStorage);
@@ -47,7 +45,7 @@ function applySetting(setting) {
   applyStorage("setting");
 }
 applySetting(model.setting);
-setting.onChange(() => {
+setting.onChange((setting) => {
   model.setting = setting;
   applySetting();
 });
@@ -64,16 +62,16 @@ menubar.onMenuItemClick((key, data) => {
       loadPath(history.path, history.index);
       break;
     case "addTag":
-      onAddTag();
+      tags.addTag();
       break;
     case "showTagList":
-      tags.show();
+      tags.toggle();
       break;
     case "loadHistory":
       loadPath(data.path, data.index);
       break;
     case "showSetting":
-      setting.show();
+      setting.toggle();
       break;
   }
 });
@@ -109,33 +107,10 @@ toolbar.onZoomChange((zoom) => {
   model.zoom = Math.max(minZoom, Math.min(maxZoom, zoom));
   images.updateZoom();
 });
+
 // 标签
-function onAddTag() {
-  const comment = prompt($t("tags.comment"));
-  if (typeof comment === "string") {
-    model.addTag({
-      path: model.rootPath,
-      index: model.index,
-      total: model.total,
-      comment,
-    });
-  }
-  tags.update();
-}
-toolbar.onShowTags(() => tags.show());
-toolbar.onAddTag(onAddTag);
-tags.onLoadTag((group, index) => {
-  const tag = model.tags[group][index];
-  loadPath(tag.path, tag.index);
-});
-tags.onDeleteTag((group, index) => {
-  model.deleteTag(group, index);
-  tags.update();
-});
-tags.onClearTags(() => {
-  model.clearTags();
-  tags.update();
-});
+toolbar.onAddTag(() => tags.addTag());
+tags.onLoadTag((index) => loadIndex(index));
 
 // 窗口尺寸变更
 let timer = -1;
@@ -182,9 +157,9 @@ async function getImages(files, images = [], readFolder = true, folder) {
 // 跳转到指定页码
 async function loadIndex(index) {
   model.index = index;
-  await images.loadIndex(index);
   toolbar.updateIndex();
   updateTitle();
+  await images.loadIndex(index);
 }
 
 // 加载指定路径
@@ -212,6 +187,7 @@ async function loadPath(path, index) {
     document.body.classList[model.total > 0 ? "remove" : "add"]("no-image");
     toolbar.updateTotal();
     loadIndex(index);
+    tags.load();
     model.addHistory({ path, index });
   }
 

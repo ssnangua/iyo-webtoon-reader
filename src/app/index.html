@@ -13,9 +13,24 @@
 <body class="no-image">
   <div id="app">
     <div id="main">
-      <div id="images"></div>
+      <div id="tags-hover"></div>
+      <div id="tags" class="hide">
+        <div class="dialog-header">
+          <span id="tags-title" lang-text="tags.title"></span>
+          <span id="tags-close" class="iconfont icon-close"></span>
+        </div>
+        <div id="tags-list" class="dialog-body"></div>
+        <div class="dialog-footer">
+          <button id="tags-add" lang-text="tags.add" style="float: left;"></button>
+          <button id="tags-clear" lang-text="tags.clear"></button>
+        </div>
+        <div id="tags-resize"></div>
+      </div>
+      <div id="images-container">
+        <div id="images"></div>
+      </div>
     </div>
-    <div id="toolbar" class="disabled">
+    <div id="toolbar" class="disabled no-handler">
       <div id="zoomtool">
         <span id="btn-zoomout" lang-title="toolbar.zoomout" class="iconfont icon-minus"></span>
         <span id="zoom">100%</span>
@@ -43,14 +58,43 @@
     </div>
   </div>
 
-  <div class="dialog-modal" id="setting">
+  <div class="dialog-modal hide" id="tag-dialog">
     <div class="dialog">
       <div class="dialog-header">
-        <span class="dialog-title" lang-text="setting.title"></span>
-        <span class="dialog-close iconfont icon-close"></span>
+        <span class="dialog-title" lang-text="tags.tag"></span>
+        <span id="tag-close" dialog-close class="iconfont icon-close"></span>
       </div>
       <div class="dialog-body">
         <table>
+          <tr>
+            <td><label for="tag-page" lang-text="tags.page"></label></td>
+            <td><input id="tag-page" type="number" min="1" step="1"></td>
+          </tr>
+          <tr>
+            <td><label for="tag-comment" lang-text="tags.comment"></label></td>
+            <td><input id="tag-comment" type="text"></td>
+          </tr>
+        </table>
+      </div>
+      <div class="dialog-footer">
+        <button id="tag-ok" dialog-close lang-text="dialog.ok"></button>
+        <button id="tag-cancel" dialog-close lang-text="dialog.cancel"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog-modal hide" id="setting-dialog">
+    <div class="dialog">
+      <div class="dialog-header">
+        <span class="dialog-title" lang-text="setting.title"></span>
+        <span id="setting-close" dialog-close class="iconfont icon-close"></span>
+      </div>
+      <div class="dialog-body">
+        <table>
+          <tr>
+            <td><label for="scroll-delta" lang-text="setting.scrollDelta"></label></td>
+            <td><input id="scroll-delta" type="number" min="1" max="1000" step="1"></td>
+          </tr>
           <tr>
             <td><label for="auto-load-history" lang-text="setting.autoLoadHistory"></label></td>
             <td><input id="auto-load-history" type="checkbox"></td>
@@ -70,23 +114,8 @@
         </table>
       </div>
       <div class="dialog-footer">
-        <button id="setting-ok" lang-text="setting.ok"></button>
-        <button id="setting-cancel" lang-text="setting.cancel"></button>
-      </div>
-    </div>
-  </div>
-
-  <div class="dialog-modal" id="tags">
-    <div class="dialog" style="width: 80%;">
-      <div class="dialog-header">
-        <span class="dialog-title" lang-text="tags.title"></span>
-        <span class="dialog-close iconfont icon-close"></span>
-      </div>
-      <div class="dialog-body">
-        <div id="tags-list"></div>
-      </div>
-      <div class="dialog-footer">
-        <button id="tags-clear" lang-text="tags.clear"></button>
+        <button id="setting-ok" dialog-close lang-text="dialog.ok"></button>
+        <button id="setting-cancel" dialog-close lang-text="dialog.cancel"></button>
       </div>
     </div>
   </div>

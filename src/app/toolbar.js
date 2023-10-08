@@ -1,9 +1,8 @@
 import model from "./model.js";
 import menubar from "./menubar.js";
+import { $ } from "./util.js";
 
-let _onIndexChange, _onZoomChange, _onAddTag, _onShowTags;
-
-const $ = (s) => document.querySelector(s);
+let _onIndexChange, _onZoomChange, _onAddTag;
 
 const $toolbar = $("#toolbar");
 const $tooltip = $("#tooltip");
@@ -22,12 +21,13 @@ function setBtnEnable(btn, enable) {
   btn.classList[enable ? "remove" : "add"]("disabled");
 }
 
-let barW, barH;
+let barW, barH, barX;
 
 // 窗口尺寸变更，更新画布大小
 function updateSize() {
   barW = window.innerWidth - 310;
   barH = 20;
+  barX = 90;
   $canvas.width = barW;
   $canvas.height = barH;
   updateTotal();
@@ -84,17 +84,40 @@ function updateIndex() {
   setBtnEnable($last, model.index < model.total - 1);
 }
 
-// 点击进度条，跳转相应页码
-$canvas.addEventListener("click", (e) => {
+function getIndexByMouse(e) {
+  const index = Math.round(((e.pageX - barX) / barW) * (model.total - 1));
+  return Math.max(0, Math.min(model.total - 1, index));
+}
+
+// 点击进度条/拖动进度条游标，跳转相应页码
+let isMovingHandler = false;
+$canvas.addEventListener("mousedown", (e) => {
   if (model.total < 2) return;
-  const index = Math.round((e.offsetX / barW) * (model.total - 1));
-  _onIndexChange(index);
+  isMovingHandler = true;
+  $toolbar.classList.add("handler-moving");
+  window.addEventListener("mousemove", moveHandler);
+  window.addEventListener("mouseup", applyHandler);
+  $toolbar.classList.add("tip");
+  updateTip(e);
 });
+function moveHandler(e) {
+  updateTip(e);
+  const index = getIndexByMouse(e);
+  const w = (barW - 2) / (model.total - 1);
+  $handler.style.left = index * w + 90 + "px";
+}
+function applyHandler(e) {
+  window.removeEventListener("mousemove", moveHandler);
+  window.removeEventListener("mouseup", applyHandler);
+  isMovingHandler = false;
+  $toolbar.classList.remove("handler-moving");
+  if (e.target !== $canvas) $toolbar.classList.remove("tip");
+  _onIndexChange(getIndexByMouse(e));
+}
 
 // 进度条提示
 function updateTip(e) {
-  let index = Math.round((e.offsetX / barW) * (model.total - 1));
-  index = Math.max(0, Math.min(model.total - 1, index));
+  const index = getIndexByMouse(e);
   const count = model.total;
   const name = model.images[index].name;
   $tooltip.innerText = `${index + 1}/${count}: ${name}`;
@@ -107,13 +130,13 @@ function updateTip(e) {
 }
 $canvas.addEventListener("mouseenter", (e) => {
   if (model.total < 2) return;
-  $toolbar.classList.add("tip");
   $canvas.addEventListener("mousemove", updateTip);
+  $toolbar.classList.add("tip");
   updateTip(e);
 });
 $canvas.addEventListener("mouseleave", () => {
-  $toolbar.classList.remove("tip");
   $canvas.removeEventListener("mousemove", updateTip);
+  if (!isMovingHandler) $toolbar.classList.remove("tip");
 });
 
 // 跳转按钮
@@ -131,18 +154,26 @@ function inputSelectAll($input) {
 // 页码
 const $pagination = $("#pagination");
 const $pageInput = $("#page-input");
+function cancelPageInput(e) {
+  if (e.key === "Escape") {
+    $pageInput.value = model.index + 1;
+    $pageInput.blur();
+  }
+}
 $("#page").addEventListener("click", () => {
   $pagination.classList.add("input");
   $pageInput.value = model.index + 1;
   inputSelectAll($pageInput);
   $pageInput.focus();
+  document.addEventListener("keydown", cancelPageInput);
 });
 $pageInput.addEventListener("blur", () => {
   $pagination.classList.remove("input");
+  document.removeEventListener("keydown", cancelPageInput);
 });
 $pageInput.addEventListener("change", () => {
   const index = parseInt($pageInput.value) - 1;
-  if (!isNaN(index)) _onIndexChange(index);
+  if (!isNaN(index) && index !== model.index) _onIndexChange(index);
   $pageInput.value = model.index + 1;
   inputSelectAll($pageInput);
 });
@@ -154,11 +185,18 @@ const $zoomInput = $("#zoom-input");
 const $zoomout = $("#btn-zoomout");
 const $zoomin = $("#btn-zoomin");
 function updateZoom() {
-  $zoom.innerText = Math.round(model.zoom * 100) + "%";
-  $zoomInput.value = model.zoom * 100;
+  const zoom = Math.round(model.zoom * 100);
+  $zoom.innerText = zoom + "%";
+  $zoomInput.value = zoom;
   const { minZoom, maxZoom } = model.setting;
   setBtnEnable($zoomout, model.zoom > minZoom);
   setBtnEnable($zoomin, model.zoom < maxZoom);
+}
+function cancelZoomInput(e) {
+  if (e.key === "Escape") {
+    $zoomInput.value = model.zoom * 100;
+    $zoomInput.blur();
+  }
 }
 $zoomout.addEventListener("click", () => {
   _onZoomChange(model.zoom - 0.25);
@@ -173,9 +211,11 @@ $zoom.addEventListener("click", () => {
   updateZoom();
   inputSelectAll($zoomInput);
   $zoomInput.focus();
+  document.addEventListener("keydown", cancelZoomInput);
 });
 $zoomInput.addEventListener("blur", () => {
   $zoomtool.classList.remove("input");
+  document.removeEventListener("keydown", cancelZoomInput);
 });
 $zoomInput.addEventListener("change", () => {
   const zoom = parseInt($zoomInput.value);
@@ -187,11 +227,6 @@ $zoomInput.addEventListener("change", () => {
 // 标签
 const $tag = $("#btn-tag");
 $tag.addEventListener("click", () => _onAddTag());
-$tag.addEventListener("contextmenu", (e) => {
-  e.preventDefault();
-  _onShowTags();
-  return false;
-});
 
 // 全屏
 const win = nw.Window.get();
@@ -213,7 +248,7 @@ const esc = new nw.Shortcut({
 });
 $("#btn-fullscreen").addEventListener("click", enterFullscreen);
 $("#btn-leavefullscreen").addEventListener("click", leaveFullscreen);
-$("#main").addEventListener("dblclick", () => {
+$("#images-container").addEventListener("dblclick", () => {
   if (model.total > 0) {
     if (win.isFullscreen) leaveFullscreen();
     else enterFullscreen();
@@ -224,7 +259,6 @@ export default {
   onIndexChange: (callback) => (_onIndexChange = callback),
   onZoomChange: (callback) => (_onZoomChange = callback),
   onAddTag: (callback) => (_onAddTag = callback),
-  onShowTags: (callback) => (_onShowTags = callback),
   updateSize,
   updateTotal,
   updateIndex,

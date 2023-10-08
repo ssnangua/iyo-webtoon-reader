@@ -1,6 +1,7 @@
 import fs from "fs";
 import os from "os";
 import nwbuild from "nw-builder";
+import options from "./options.js";
 
 const { name, version } = JSON.parse(
   fs.readFileSync("./src/package.json").toString()
@@ -8,19 +9,11 @@ const { name, version } = JSON.parse(
 const buildName = [name, version, os.platform(), os.arch()].join("-");
 
 nwbuild({
-  version: "latest",
+  ...options,
+  mode: "build",
   flavor: "normal",
-  // platform: "win",
-  // arch: "x64",
-  downloadUrl: "https://dl.nwjs.io",
-  manifestUrl: "https://nwjs.io/versions",
-  cacheDir: "./cache",
-  srcDir: "./src",
   outDir: `./out/${buildName}`,
   // zip: true,
-  glob: false,
-  cache: true,
-  ffmpeg: false,
   app: {
     icon: "./src/icon.ico",
   },

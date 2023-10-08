@@ -19,11 +19,125 @@ body,
 
 #main {
   flex: auto;
-  overflow: auto;
+  display: flex;
+  flex-flow: row nowrap;
+  overflow: hidden;
 }
-#main::-webkit-scrollbar {
+
+#tags {
+  flex-shrink: 0;
+  position: relative;
+  width: 200px;
+  min-width: 150px;
+  max-width: 50%;
+  background-color: #f0f0f0;
+  overflow: hidden;
+  display: flex;
+  flex-flow: column;
+  border: 1px solid #000;
+  border-left: none;
+  font-size: 12px;
+  z-index: 101;
+}
+#tags-hover {
+  display: none;
+  background-color: rgba(0, 0, 0, 0.0001);
+  width: 20px;
+  z-index: 100;
+}
+.fullscreen #tags {
   display: none;
 }
+.fullscreen #tags.show {
+  display: flex !important;
+}
+.fullscreen #tags,
+.fullscreen #tags-hover {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+.fullscreen #tags-hover {
+  display: block;
+  bottom: 20px;
+}
+.fullscreen #tags-close {
+  display: none;
+}
+#tags-list {
+  flex: auto;
+  overflow: auto;
+  background-color: #fff;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  padding: 0;
+}
+.tag-item {
+  display: flex;
+  flex-flow: row nowrap;
+}
+.tag-item:hover {
+  background-color: #f0f0f0;
+}
+.tag-info {
+  flex: auto;
+  overflow: hidden;
+  padding: 5px;
+}
+.tag-info {
+  font-size: 12px;
+}
+.tag-page {
+  color: #e6a23c;
+}
+.tag-comment {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.no-comment {
+  font-style: italic;
+  opacity: 0.5;
+}
+.tag-btn {
+  display: none;
+  align-items: center;
+  padding: 0 5px;
+}
+.tag-item:hover .tag-btn {
+  display: flex;
+}
+.tag-btn:hover {
+  background-color: #ccc;
+}
+.tag-btn > span {
+  pointer-events: none;
+}
+
+#tags-resize {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background-color: rgba(0, 0, 0, 0.0001);
+  cursor: w-resize;
+}
+#tags-resize:hover {
+  background-color: rgb(103, 194, 58, 0.8);
+}
+#tags-resize:active {
+  background-color: rgb(245, 108, 108, 0.8);
+}
+
+#images-container {
+  flex: auto;
+  overflow: hidden;
+}
+/* #images-container::-webkit-scrollbar {
+  display: none;
+} */
 #images {
   display: flex;
   flex-flow: column;
@@ -81,6 +195,7 @@ img {
   bottom: 22px;
   background-color: #ffffe1;
   border: solid 1px #fff;
+  z-index: 999;
 }
 .tip #tooltip,
 .tip #handler-preview {
@@ -142,7 +257,8 @@ img {
   bottom: 0;
   opacity: 0.0001;
 }
-.fullscreen #toolbar:hover {
+.fullscreen #toolbar:hover,
+.fullscreen #toolbar.handler-moving {
   opacity: 1;
 }
 #btn-leavefullscreen {
@@ -156,13 +272,13 @@ img {
 }
 
 .dialog-modal {
-  display: none;
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
 }
 .dialog {
   position: fixed;
@@ -172,98 +288,53 @@ img {
   max-width: calc(100vw - 20px);
   max-height: calc(100vh - 20px);
   background-color: #fff;
-  border-radius: 2px;
   display: flex;
   flex-flow: column;
   overflow: hidden;
+  font-size: 14px;
+  border: 1px solid #000;
 }
 .dialog-header {
   flex-shrink: 0;
-  height: 20px;
-  padding: 20px;
+  padding: 4px;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
+  background-color: #f0f0f0;
   line-height: 20px;
 }
-.dialog-title {
-  font-size: 16px;
+/* .dialog-title {
   font-weight: bold;
-}
+} */
 .dialog-body {
-  padding: 0 20px;
+  padding: 10px;
   flex: auto;
   overflow: auto;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
 }
 .dialog-footer {
-  min-height: 20px;
   flex-shrink: 0;
-  padding: 20px;
+  padding: 4px;
   text-align: right;
+  background-color: #f0f0f0;
+  line-height: 20px;
 }
 
-#setting tr > td:first-child {
+.dialog-body tr > td:first-child {
   text-align: right;
   padding-right: 10px;
 }
 
-.tag-group {
-  font-size: 14px;
-  font-weight: bold;
-  margin: 5px 0;
-}
-.tag-group,
-.tag-item {
-  display: flex;
-  flex-flow: row nowrap;
-}
-.tag-item {
-  margin-left: 20px;
-}
-.tag-item:hover {
-  background-color: #f0f0f0;
-}
-.tag-group-name,
-.tag-info {
-  flex: auto;
-  overflow: hidden;
-  padding: 5px;
-}
-.tag-info {
-  font-size: 12px;
-}
-.tag-page {
-  color: #e6a23c;
-}
-.tag-delete {
-  display: none;
-  align-items: center;
-  padding: 0 10px;
-}
-.tag-group:hover .tag-delete,
-.tag-item:hover .tag-delete {
-  display: flex;
-}
-.tag-delete:hover {
-  background-color: #ccc;
-}
-.tag-comment {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.no-comment {
-  font-style: italic;
-  opacity: 0.5;
-}
-.tag-delete > span {
-  pointer-events: none;
-}
-
 .nodata {
+  font-size: 12px;
   padding: 20px;
   pointer-events: none;
   font-style: italic;
   opacity: 0.5;
   text-align: center;
+}
+
+.hide {
+  display: none !important;
 }

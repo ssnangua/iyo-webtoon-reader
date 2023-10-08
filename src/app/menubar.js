@@ -86,6 +86,7 @@ function createMenubar() {
           {
             label: $t("menubar.file.addTag"),
             key: "t",
+            modifiers: "ctrl",
             click() {
               _onMenuItemClick("addTag");
             },
@@ -93,7 +94,7 @@ function createMenubar() {
           {
             label: $t("menubar.file.showTagList"),
             key: "t",
-            modifiers: "ctrl",
+            modifiers: "ctrl+shift",
             click() {
               _onMenuItemClick("showTagList");
             },

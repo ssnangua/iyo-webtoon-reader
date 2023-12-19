@@ -14,6 +14,7 @@ export const messages = {
         history: "History",
         clear: "Clear",
         setting: "Setting",
+        openNewWindow: "Open New Window",
         exit: "Exit",
       },
       language: {
@@ -63,6 +64,7 @@ export const messages = {
       tag: "Tag",
       page: "Page",
       comment: "Comment",
+      updatePage: "Update Page",
     },
     notExist: "Path does not exist",
     nodata: "No data",
@@ -82,6 +84,7 @@ export const messages = {
         history: "历史",
         clear: "清空",
         setting: "设置",
+        openNewWindow: "打开新窗口",
         exit: "退出",
       },
       language: {
@@ -132,6 +135,7 @@ export const messages = {
       tag: "书签",
       page: "页码",
       comment: "描述",
+      setPage: "更新页码",
     },
     notExist: "路径不存在",
     nodata: "无数据",

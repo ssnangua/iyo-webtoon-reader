@@ -117,6 +117,14 @@ function createMenubar() {
             },
           },
           {
+            label: $t("menubar.file.openNewWindow"),
+            key: "n",
+            modifiers: "ctrl",
+            click() {
+              process.emit("openNewWindow");
+            },
+          },
+          {
             label: $t("menubar.file.exit"),
             key: "q",
             modifiers: "ctrl",

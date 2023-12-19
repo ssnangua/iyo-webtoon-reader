@@ -1,6 +1,6 @@
 {
   "name": "iyo-webtoon-reader",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A simple local webtoon reader | 一个简单的本地条漫阅读器",
   "main": "app/main.js",
   "//chromium-args": "--force-device-scale-factor=1",
@@ -22,6 +22,6 @@
   },
   "homepage": "https://github.com/ssnangua/iyo-webtoon-reader#readme",
   "dependencies": {
-    "node-stream-zip": "^1.15.0"
+    "@ssnangua/node-stream-zip": "^1.15.1"
   }
 }

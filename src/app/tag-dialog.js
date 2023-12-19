@@ -1,4 +1,5 @@
 import { $, dialog } from "./util.js";
+import model from "./model.js";
 
 const $tagDialog = $("#tag-dialog");
 const $tagPage = $("#tag-page");
@@ -29,6 +30,10 @@ function applyByEnter(e) {
   }
 }
 
+$("#tag-updatepage").addEventListener(
+  "click",
+  () => ($tagPage.value = model.index + 1)
+);
 $("#tag-ok").addEventListener("click", apply);
 $tagComment.addEventListener("keydown", applyByEnter);
 $tagComment.addEventListener("keydown", applyByEnter);

@@ -1,5 +1,5 @@
 const path = require("path");
-const StreamZip = require("node-stream-zip");
+const StreamZip = require("@ssnangua/node-stream-zip");
 
 const imageRule = /\.(jpg|jpeg|png|webp|gif|bmp)$/i;
 
@@ -20,6 +20,7 @@ async function load(file) {
         folder: path.basename(file),
         zip,
         name: entry.name,
+        basename: path.basename(entry.name),
       };
     });
 }

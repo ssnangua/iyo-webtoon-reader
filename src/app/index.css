@@ -194,8 +194,10 @@ img {
   position: fixed;
   bottom: 22px;
   background-color: #ffffe1;
-  border: solid 1px #fff;
+  border: solid 1px #000;
+  padding: 2px 4px;
   z-index: 999;
+  text-align: center;
 }
 .tip #tooltip,
 .tip #handler-preview {

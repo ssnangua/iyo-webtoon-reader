@@ -6,6 +6,22 @@ export function $$(s) {
   return document.querySelectorAll(s);
 }
 
+export function throttle(fn, delay) {
+  let timestamp = 0;
+  let timer = -1;
+  return function () {
+    let now = Date.now();
+    if (now - timestamp > delay) {
+      fn.apply(this, arguments);
+      timestamp = now;
+    }
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.apply(this, arguments);
+    }, delay);
+  };
+}
+
 // dialog
 export const dialog = {
   visible: {},

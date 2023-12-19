@@ -119,8 +119,8 @@ function applyHandler(e) {
 function updateTip(e) {
   const index = getIndexByMouse(e);
   const count = model.total;
-  const name = model.images[index].name;
-  $tooltip.innerText = `${index + 1}/${count}: ${name}`;
+  const name = model.images[index].basename;
+  $tooltip.innerHTML = `<b>${index + 1}/${count}</b> : ${name}`;
   const tipW = $tooltip.offsetWidth;
   const w = (barW - 2) / (count - 1);
   const left = index * w + 90;
@@ -200,15 +200,12 @@ function cancelZoomInput(e) {
 }
 $zoomout.addEventListener("click", () => {
   _onZoomChange(model.zoom - 0.25);
-  updateZoom();
 });
 $zoomin.addEventListener("click", () => {
   _onZoomChange(model.zoom + 0.25);
-  updateZoom();
 });
 $zoom.addEventListener("click", () => {
   $zoomtool.classList.add("input");
-  updateZoom();
   inputSelectAll($zoomInput);
   $zoomInput.focus();
   document.addEventListener("keydown", cancelZoomInput);
@@ -220,7 +217,6 @@ $zoomInput.addEventListener("blur", () => {
 $zoomInput.addEventListener("change", () => {
   const zoom = parseInt($zoomInput.value);
   if (!isNaN(zoom)) _onZoomChange(zoom / 100);
-  updateZoom();
   inputSelectAll($zoomInput);
 });
 
@@ -262,4 +258,5 @@ export default {
   updateSize,
   updateTotal,
   updateIndex,
+  updateZoom,
 };

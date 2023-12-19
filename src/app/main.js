@@ -17,3 +17,4 @@ function onOpen() {
 onOpen();
 
 nw.App.on("open", onOpen);
+process.on("openNewWindow", onOpen);

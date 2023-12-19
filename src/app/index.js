@@ -95,18 +95,21 @@ images.onIndexChange((index) => {
 });
 
 // 工具栏
-toolbar.updateSize();
-toolbar.onIndexChange((index) => {
+function setIndex(index) {
   model.index = Math.max(0, Math.min(model.total - 1, index));
   images.loadIndex(model.index);
   toolbar.updateIndex();
   updateTitle();
-});
-toolbar.onZoomChange((zoom) => {
+}
+function setZoom(zoom) {
   const { minZoom, maxZoom } = model.setting;
   model.zoom = Math.max(minZoom, Math.min(maxZoom, zoom));
   images.updateZoom();
-});
+  toolbar.updateZoom();
+}
+toolbar.updateSize();
+toolbar.onIndexChange(setIndex);
+toolbar.onZoomChange(setZoom);
 
 // 标签
 toolbar.onAddTag(() => tags.addTag());
@@ -116,7 +119,10 @@ tags.onLoadTag((index) => loadIndex(index));
 let timer = -1;
 window.addEventListener("resize", () => {
   clearTimeout(timer);
-  timer = setTimeout(() => toolbar.updateSize(), 10);
+  timer = setTimeout(() => {
+    toolbar.updateSize();
+    images.updateZoom();
+  }, 100);
 });
 
 const imageRule = /\.(jpg|jpeg|png|webp|gif|bmp)$/i;
@@ -146,6 +152,7 @@ async function getImages(files, images = [], readFolder = true, folder) {
           folder,
           path: file,
           name: path.relative(folder, file),
+          basename: path.basename(file),
           src: url.pathToFileURL(file).toString(),
         });
       }
@@ -231,4 +238,47 @@ nw.Window.get().on("close", function () {
     }
   }
   this.close(true);
+});
+
+let scrollTimer = -1;
+function startScroll(y) {
+  stopScroll();
+  scrollTimer = setInterval(() => {
+    images.scrollBy(y);
+  }, 10);
+}
+function stopScroll() {
+  if (scrollTimer > 0) {
+    clearInterval(scrollTimer);
+    scrollTimer = -1;
+  }
+}
+
+// 按键
+window.addEventListener("keydown", (e) => {
+  if (e.repeat) return;
+  // console.log(e);
+  if (e.code === "ArrowUp") {
+    startScroll(-10);
+  } else if (e.code === "ArrowDown") {
+    startScroll(10);
+  } else if (e.code === "ArrowLeft" || e.code === "PageUp") {
+    setIndex(model.index - 1);
+  } else if (e.code === "ArrowRight" || e.code === "PageDown") {
+    setIndex(model.index + 1);
+  } else if (e.code === "Home") {
+    setIndex(0);
+  } else if (e.code === "End") {
+    setIndex(model.total - 1);
+  } else if ((e.ctrlKey || e.metaKey) && e.code === "Equal") {
+    setZoom(model.zoom + 0.25);
+  } else if ((e.ctrlKey || e.metaKey) && e.code === "Minus") {
+    setZoom(model.zoom - 0.25);
+  }
+});
+
+window.addEventListener("keyup", (e) => {
+  if (e.code === "ArrowDown" || e.code === "ArrowUp") {
+    stopScroll();
+  }
 });

@@ -1,34 +1,37 @@
 import model from "./model.js";
+import { throttle } from "./util.js";
 
 let _onIndexChange;
 
-let firstIndex, curIndex, lastIndex;
+let firstIndex, curIndex, lastIndex, prevScreenHeight;
+let scrollTop;
 
 const $imagesContainer = document.querySelector("#images-container");
 const $images = document.querySelector("#images");
 
-$images.addEventListener("mousewheel", (e) => {
-  $imagesContainer.scrollTop +=
-    model.setting.scrollDelta * (e.deltaY > 0 ? 1 : -1);
-});
-
 // 加载图片
 async function loadImage(index) {
   const image = model.images[index];
+  if (image.img) return image.img;
   if (!image.src) {
     const buffer = await image.zip.entryData(image.name);
     image.src = `data:image/*;base64,${buffer.toString("base64")}`;
   }
-  const img = document.createElement("img");
-  img.src = image.src;
-  img.setAttribute("data-index", index);
-  img.setAttribute("title", `${index + 1}/${model.total}: ${image.name}`);
   return new Promise((resolve) => {
-    img.onload = () => resolve(img);
-    img.onerror = () => {
+    const img = new Image();
+    image.img = img;
+    img.setAttribute("data-index", index);
+    img.setAttribute("title", `${index + 1}/${model.total}: ${image.name}`);
+    img.addEventListener("load", () => {
+      img.width = image.width = img.naturalWidth;
+      img.height = image.height = img.naturalHeight;
+      resolve(img);
+    });
+    img.addEventListener("error", () => {
       img.classList.add("error");
       resolve(img);
-    };
+    });
+    img.src = image.src;
   });
 }
 
@@ -42,67 +45,76 @@ async function loadIndex(index) {
 
   $images.innerHTML = "";
   firstIndex = curIndex = lastIndex = index;
+  prevScreenHeight = 0;
 
   // 加载当前页
   const cur = await loadImage(curIndex);
-  $images.appendChild(cur);
+  $images.append(cur);
 
-  // 加载下一页
-  if (index < model.total - 1) {
-    lastIndex = index + 1;
-    const last = await loadImage(lastIndex);
-    $images.appendChild(last);
-  }
+  // 加载上一屏、当前屏、下一屏
+  scrollTop = await loadPrevScreen();
+  await loadCurAndNextScreen();
 
-  // 加载上一页
-  if (index > 0) {
-    firstIndex = index - 1;
-    const first = await loadImage(firstIndex);
-    $images.insertBefore(first, cur);
-    // 滚动到当前页位置
-    $imagesContainer.scrollTop = first.offsetHeight + 1;
-  }
-
-  await autoLoad();
+  // 滚动到当前页位置
+  $imagesContainer.scrollTop = scrollTop + 1;
 
   loading = false;
 }
 
-// 确保图片的总高度大于容器的高度（可以出现滚动条），避免无法触发滚动加载事件
-async function autoLoad() {
+function getTotalHeight(fromIndex, toIndex) {
+  let total = 0;
+  for (let i = fromIndex; i < toIndex; i++) {
+    total += model.images[i].height;
+  }
+  return total;
+}
+// 加载上一屏
+async function loadPrevScreen() {
+  const containerHeight = $imagesContainer.offsetHeight;
+  let totalHeight = getTotalHeight(firstIndex, curIndex);
+  let prependHeight = 0;
   while (
-    $images.offsetHeight * model.zoom < $imagesContainer.offsetHeight &&
+    ((totalHeight + prependHeight) * model.zoom < containerHeight ||
+      firstIndex === curIndex) &&
+    firstIndex > 0
+  ) {
+    const img = await loadImage(--firstIndex);
+    prependHeight += img.naturalHeight;
+    $images.prepend(img);
+  }
+  return prependHeight;
+}
+// 加载当前屏和下一屏
+async function loadCurAndNextScreen() {
+  const containerHeight = $imagesContainer.offsetHeight;
+  let totalHeight = getTotalHeight(curIndex, lastIndex);
+  let appendHeight = 0;
+  while (
+    ((totalHeight + appendHeight) * model.zoom < containerHeight * 2 ||
+      lastIndex === curIndex) &&
     lastIndex < model.total - 1
   ) {
-    const last = await loadImage(++lastIndex);
-    $images.appendChild(last);
+    const img = await loadImage(++lastIndex);
+    appendHeight += img.naturalHeight;
+    $images.appendChild(img);
   }
+  return appendHeight;
 }
 
-// 滚动
-let timer = -1;
-$imagesContainer.addEventListener("scroll", () => {
+$images.addEventListener("mousewheel", (e) => {
   if (loading) return;
-  clearTimeout(timer);
-  timer = setTimeout(async () => {
+  $imagesContainer.scrollTop +=
+    model.setting.scrollDelta * (e.deltaY > 0 ? 1 : -1);
+});
+
+// 滚动
+$imagesContainer.addEventListener(
+  "scroll",
+  throttle(async (e) => {
+    if (loading) return;
+
     const imgs = $images.children;
     if (imgs.length === 0) return;
-
-    // 加载上一页
-    if ($imagesContainer.scrollTop < imgs[0].offsetHeight && firstIndex > 0) {
-      const first = await loadImage(--firstIndex);
-      $images.insertBefore(first, $images.firstChild);
-    }
-
-    // 加载下一页
-    if (
-      $imagesContainer.scrollTop + $imagesContainer.offsetHeight >
-        $imagesContainer.scrollHeight - imgs[imgs.length - 1].offsetHeight &&
-      lastIndex < model.total - 1
-    ) {
-      const last = await loadImage(++lastIndex);
-      $images.appendChild(last);
-    }
 
     // 更新当前页码
     for (let i = imgs.length - 1; i >= 0; i--) {
@@ -116,14 +128,21 @@ $imagesContainer.addEventListener("scroll", () => {
         break;
       }
     }
-  }, 100);
-});
+
+    if (scrollTop >= $imagesContainer.scrollTop)
+      $imagesContainer.scrollTop += await loadPrevScreen();
+    else await loadCurAndNextScreen();
+
+    scrollTop = $imagesContainer.scrollTop;
+  }, 100)
+);
 
 // 更新缩放比例
 async function updateZoom() {
   const scrollTop = $imagesContainer.scrollTop / model.zoom;
   $imagesContainer.style.zoom = model.zoom;
-  await autoLoad();
+  await loadPrevScreen();
+  await loadCurAndNextScreen();
   $imagesContainer.scrollTop = scrollTop * model.zoom;
 }
 
@@ -131,4 +150,7 @@ export default {
   onIndexChange: (callback) => (_onIndexChange = callback),
   loadIndex,
   updateZoom,
+  scrollBy(y) {
+    $imagesContainer.scrollBy(0, y);
+  },
 };

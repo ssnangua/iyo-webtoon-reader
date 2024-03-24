@@ -1,4 +1,4 @@
-# iYo Webtoon Reader | 哎哟条漫阅读器 1.2.0
+# iYo Webtoon Reader | 哎哟条漫阅读器 1.3.0
 
 A simple local webtoon reader | 一个简单的本地条漫阅读器
 

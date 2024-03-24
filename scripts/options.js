@@ -1,6 +1,6 @@
 export default {
   version: "latest",
-  downloadUrl: "https://npm.taobao.org/mirrors/nwjs",
+  downloadUrl: "https://npmmirror.com/mirrors/nwjs",
   // manifestUrl: "https://nwjs.io/versions",
   cache: true,
   cacheDir: "./cache",

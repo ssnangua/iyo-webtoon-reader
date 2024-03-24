@@ -149,6 +149,9 @@ img {
   position: relative;
   image-rendering: -webkit-optimize-contrast;
 }
+.is-alt img {
+  outline: dashed 1px #f00;
+}
 /* img:hover {
   opacity: 0.8;
 } */

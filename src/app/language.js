@@ -9,6 +9,7 @@ export const messages = {
         file: "File",
         openZipFile: "Open *.zip File",
         openFolder: "Open Folder",
+        showInFileManager: "Show In File Manager",
         addTag: "Add Tag",
         showTagList: "Show Tag List",
         history: "History",
@@ -69,6 +70,9 @@ export const messages = {
     notExist: "Path does not exist",
     nodata: "No data",
     empty: "(Empty)",
+    contextmenu: {
+      saveImage: "Save Image",
+    },
   },
 
   "zh-CN": {
@@ -79,6 +83,7 @@ export const messages = {
         file: "文件",
         openZipFile: "打开 *.zip 文件",
         openFolder: "打开文件夹",
+        showInFileManager: "在文件管理器中显示",
         addTag: "添加书签",
         showTagList: "显示书签列表",
         history: "历史",
@@ -140,6 +145,9 @@ export const messages = {
     notExist: "路径不存在",
     nodata: "无数据",
     empty: "(空)",
+    contextmenu: {
+      saveImage: "保存图片",
+    },
   },
 };
 

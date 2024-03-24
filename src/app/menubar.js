@@ -1,5 +1,6 @@
 import { messages, $t } from "./language.js";
 import model from "./model.js";
+import { createMenu } from "./util.js";
 
 const os = require("os");
 const path = require("path");
@@ -17,14 +18,6 @@ function init() {
 const input = document.createElement("input");
 input.setAttribute("type", "file");
 input.addEventListener("change", () => _onMenuItemClick("open", input.value));
-
-function createMenu(items, option = { type: "contextmenu" }) {
-  const menu = new nw.Menu(option);
-  items.forEach((item) => {
-    menu.append(new nw.MenuItem(item));
-  });
-  return menu;
-}
 
 function createHistorySubmenu() {
   if (model.history.length > 0) {
@@ -78,6 +71,15 @@ function createMenubar() {
               input.removeAttribute("accept");
               input.setAttribute("nwdirectory", "nwdirectory");
               input.click();
+            },
+          },
+          {
+            type: "separator",
+          },
+          {
+            label: $t("menubar.file.showInFileManager"),
+            click() {
+              _onMenuItemClick("showInFileManager");
             },
           },
           {
@@ -153,9 +155,7 @@ function createMenubar() {
           {
             label: $t("menubar.help.homePage"),
             click() {
-              nw.Shell.openExternal(
-                "https://github.com/ssnangua/iyo-webtoon-reader"
-              );
+              nw.Shell.openExternal("https://github.com/ssnangua/iyo-webtoon-reader");
             },
           },
           {

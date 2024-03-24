@@ -52,3 +52,12 @@ $$("[dialog-close]").forEach((btn) => {
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") dialog.closeAll();
 });
+
+// menu
+export function createMenu(items, option = { type: "contextmenu" }) {
+  const menu = new nw.Menu(option);
+  items.forEach((item) => {
+    menu.append(new nw.MenuItem(item));
+  });
+  return menu;
+}

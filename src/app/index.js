@@ -3,6 +3,7 @@ import zip from "./zip.js";
 import images from "./images.js";
 import toolbar from "./toolbar.js";
 import menubar from "./menubar.js";
+import contextmenu from "./contextmenu.js";
 import setting from "./setting.js";
 import tags from "./tags.js";
 import { $t } from "./language.js";
@@ -28,6 +29,7 @@ model.onStorageChange(applyStorage);
 function onLocaleChange() {
   updateTitle();
   menubar.init();
+  contextmenu.init();
   document.querySelectorAll("[lang-title]").forEach((el) => {
     const key = el.getAttribute("lang-title");
     el.title = $t(key);
@@ -60,6 +62,9 @@ menubar.onMenuItemClick((key, data) => {
     case "open":
       const history = model.findHistory(data) || { path: data, index: 0 };
       loadPath(history.path, history.index);
+      break;
+    case "showInFileManager":
+      nw.Shell.showItemInFolder(model.rootPath);
       break;
     case "addTag":
       tags.addTag();
@@ -274,11 +279,15 @@ window.addEventListener("keydown", (e) => {
     setZoom(model.zoom + 0.25);
   } else if ((e.ctrlKey || e.metaKey) && e.code === "Minus") {
     setZoom(model.zoom - 0.25);
+  } else if (e.key === "Alt") {
+    document.body.classList.add("is-alt");
   }
 });
 
 window.addEventListener("keyup", (e) => {
   if (e.code === "ArrowDown" || e.code === "ArrowUp") {
     stopScroll();
+  } else if (e.key === "Alt") {
+    document.body.classList.remove("is-alt");
   }
 });

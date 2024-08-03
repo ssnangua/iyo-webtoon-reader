@@ -102,6 +102,14 @@ function createMenubar() {
             },
           },
           {
+            label: $t("menubar.file.showChapterList"),
+            key: "c",
+            modifiers: "ctrl+shift",
+            click() {
+              _onMenuItemClick("showChapterList");
+            },
+          },
+          {
             type: "separator",
           },
           {

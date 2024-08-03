@@ -6,11 +6,16 @@ import menubar from "./menubar.js";
 import contextmenu from "./contextmenu.js";
 import setting from "./setting.js";
 import tags from "./tags.js";
+import time from "./time.js";
+import { $, $$ } from "./util.js";
 import { $t } from "./language.js";
 
 const path = require("path");
 const fs = require("fs");
 const url = require("url");
+
+const $fsTitle = $("#fs-title");
+const $fsPage = $("#fs-page");
 
 function applyStorage(key) {
   switch (key) {
@@ -30,11 +35,11 @@ function onLocaleChange() {
   updateTitle();
   menubar.init();
   contextmenu.init();
-  document.querySelectorAll("[lang-title]").forEach((el) => {
+  $$("[lang-title]").forEach((el) => {
     const key = el.getAttribute("lang-title");
     el.title = $t(key);
   });
-  document.querySelectorAll("[lang-text]").forEach((el) => {
+  $$("[lang-text]").forEach((el) => {
     const key = el.getAttribute("lang-text");
     el.innerText = $t(key);
   });
@@ -45,6 +50,9 @@ onLocaleChange();
 function applySetting(setting) {
   document.body.style.backgroundColor = model.setting.backgroundColor;
   applyStorage("setting");
+  document.body.classList.toggle("fs-page", model.setting.displayPage);
+  document.body.classList.toggle("fs-time", model.setting.displayTime);
+  time.toggle();
 }
 applySetting(model.setting);
 setting.onChange((setting) => {
@@ -70,7 +78,10 @@ menubar.onMenuItemClick((key, data) => {
       tags.addTag();
       break;
     case "showTagList":
-      tags.toggle();
+      tags.toggle("tags");
+      break;
+    case "showChapterList":
+      tags.toggle("chapters");
       break;
     case "loadHistory":
       loadPath(data.path, data.index);
@@ -83,13 +94,16 @@ menubar.onMenuItemClick((key, data) => {
 
 // 标题
 function updateTitle() {
+  let title;
   if (model.index === -1) {
-    document.title = `${$t("appName")} - ${nw.App.manifest.version}`;
+    title = `${$t("appName")} - ${nw.App.manifest.version}`;
   } else {
     const image = model.images[model.index];
-    document.title = `${model.index + 1}/${model.total}: 
-      ${image.name} <${image.folder}>`;
+    title = `${model.index + 1}/${model.total}: ${image.name} <${image.folder}>`;
   }
+  document.title = title;
+  $fsTitle.innerText = title;
+  $fsPage.innerText = `${model.index + 1}/${model.total}`;
 }
 
 // 图片
@@ -119,6 +133,13 @@ toolbar.onZoomChange(setZoom);
 // 标签
 toolbar.onAddTag(() => tags.addTag());
 tags.onLoadTag((index) => loadIndex(index));
+
+// 全屏
+toolbar.onFullscreen((fullscreen) => {
+  model.isFullscreen = fullscreen;
+  document.body.classList.toggle("fullscreen", fullscreen);
+  time.toggle();
+});
 
 // 窗口尺寸变更
 let timer = -1;
@@ -199,7 +220,7 @@ async function loadPath(path, index) {
     document.body.classList[model.total > 0 ? "remove" : "add"]("no-image");
     toolbar.updateTotal();
     loadIndex(index);
-    tags.load();
+    tags.reset();
     model.addHistory({ path, index });
   }
 

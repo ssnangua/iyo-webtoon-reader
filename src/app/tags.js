@@ -13,16 +13,21 @@ const $tags = $("#tags");
 const $tagsList = $("#tags-list");
 const $toolbar = $("#toolbar");
 
-let tags = [];
-function sortTagsByPage() {
-  tags.sort((a, b) => a.page - b.page);
+let showType; // "tags" | "chapters"
+let tags, chapters;
+
+function reset() {
+  tags = null;
+  chapters = null;
+  if (visible) updateView();
 }
 
+// tags
 function getTagsPath() {
   const { dir, name } = path.parse(model.rootPath);
   return path.join(dir, name + ".tags");
 }
-function load() {
+function loadTags() {
   const tagsPath = getTagsPath();
   if (fs.existsSync(tagsPath)) {
     tags = fs
@@ -37,21 +42,20 @@ function load() {
   } else {
     tags = [];
   }
-  update(false);
+  return tags;
 }
 function save() {
   const tagsPath = getTagsPath();
-  fs.writeFileSync(
-    tagsPath,
-    tags.map(({ page, comment }) => `${page}|${comment}`).join("\n")
-  );
+  fs.writeFileSync(tagsPath, tags.map(({ page, comment }) => `${page}|${comment}`).join("\n"));
 }
-
+function sortTagsByPage() {
+  tags.sort((a, b) => a.page - b.page);
+}
 function addTag() {
   tagDialog.show(model.index + 1, "", (tag) => {
     tags.push(tag);
     sortTagsByPage();
-    update();
+    updateView();
     save();
   });
 }
@@ -60,37 +64,64 @@ function editTag(index) {
   tagDialog.show(tag.page, tag.comment, (newTag) => {
     Object.assign(tag, newTag);
     sortTagsByPage();
-    update();
+    updateView();
     save();
   });
 }
 function deleteTag(index) {
   tags.splice(index, 1);
-  update();
+  updateView();
   if (tags.length > 0) save();
   else fs.rmSync(getTagsPath());
 }
 function clearTags() {
   tags = [];
-  update();
+  updateView();
   fs.rmSync(getTagsPath());
 }
 
-function update() {
+// chapters
+function generateChapters() {
+  const chMap = {};
+  chapters = [];
+  model.images.forEach((image, index) => {
+    const [, ch] = image.basename.match(/([\d.]+)_(\d+)/) ?? [];
+    const page = index + 1;
+    const comment = ch;
+    if (ch && !chMap[comment]) {
+      chMap[comment] = page;
+      chapters.push({ page, comment });
+    }
+  });
+  return chapters;
+}
+
+function setShowType(type) {
+  if (showType === type) return;
+  showType = type;
+  $tags.classList.remove("type-tags", "type-chapters");
+  $tags.classList.add(`type-${type}`);
+  if (type === "chapters" && !chapters) generateChapters();
+  updateView();
+}
+
+function updateView() {
+  const length = String(model.images.length).length;
+  const list = showType === "tags" ? tags ?? loadTags() : chapters ?? generateChapters();
   $tagsList.innerHTML =
-    tags.length > 0
-      ? tags
+    list.length > 0
+      ? list
           .map((tag, index) => {
             const comment = tag.comment
               ? `<span title="${tag.comment}">${tag.comment}</span>`
-              : `<span class="no-comment" lang-text="empty">${$t(
-                  "empty"
-                )}</span>`;
+              : `<span class="no-comment" lang-text="empty">${$t("empty")}</span>`;
             return `<div class="tag-item" data-index="${index}">
                     <div class="tag-info">
                       <div class="tag-comment">
                         <span class="tag-page">
-                          ${tag.page}: 
+                          ${String(tag.page)
+                            .padStart(length, " ")
+                            .replace(/ /g, '<span class="tag-pad">0</span>')}: 
                         </span>
                         ${comment}
                       </div>
@@ -114,10 +145,12 @@ $tagsList.addEventListener("click", (e) => {
     const { type } = e.target.dataset;
     if (type == "edit") editTag(index);
     else if (type == "delete") deleteTag(index);
-    else _onLoadTag(tags[index].page - 1);
+    else _onLoadTag((showType === "tags" ? tags : chapters)[index].page - 1);
   }
 });
 
+$("#tags-tags").addEventListener("click", () => setShowType("tags"));
+$("#tags-chapters").addEventListener("click", () => setShowType("chapters"));
 $("#tags-close").addEventListener("click", () => {
   $tags.classList.add("hide");
   visible = false;
@@ -127,14 +160,14 @@ $("#tags-clear").addEventListener("click", () => clearTags());
 
 let resizing = false;
 
-// 全屏状态下
+// 全屏状态
 $("#tags-hover").addEventListener("mouseenter", () => {
   if ($toolbar.classList.contains("handler-moving")) return;
+  if (!showType) setShowType("tags");
   $tags.classList.add("show");
 });
 $tags.addEventListener("mouseleave", () => {
-  const isFullscreen = document.body.classList.contains("fullscreen");
-  if (isFullscreen && !resizing) $tags.classList.remove("show");
+  if (model.isFullscreen && !resizing) $tags.classList.remove("show");
 });
 
 // 调整面板大小
@@ -156,12 +189,17 @@ function stopResize() {
 }
 
 export default {
-  toggle() {
-    visible = !visible;
-    $tags.classList[visible ? "remove" : "add"]("hide");
+  toggle(type) {
+    if (!visible || type !== showType) {
+      visible = true;
+      $tags.classList.remove("hide");
+      setShowType(type);
+    } else {
+      visible = false;
+      $tags.classList.add("hide");
+    }
   },
-  update,
-  load,
+  reset,
   addTag,
   onLoadTag: (callback) => (_onLoadTag = callback),
 };

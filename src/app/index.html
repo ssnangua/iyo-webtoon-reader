@@ -14,13 +14,14 @@
   <div id="app">
     <div id="main">
       <div id="tags-hover"></div>
-      <div id="tags" class="hide">
+      <div id="tags" class="hide type-tags">
         <div class="dialog-header">
-          <span id="tags-title" lang-text="tags.title"></span>
+          <span id="tags-tags" lang-text="tags.tags" class="tags-tab"></span>
+          <span id="tags-chapters" lang-text="tags.chapters" class="tags-tab"></span>
           <span id="tags-close" class="iconfont icon-close"></span>
         </div>
         <div id="tags-list" class="dialog-body"></div>
-        <div class="dialog-footer">
+        <div id="tags-toolbar" class="dialog-footer">
           <button id="tags-add" lang-text="tags.add" style="float: left;"></button>
           <button id="tags-clear" lang-text="tags.clear"></button>
         </div>
@@ -112,6 +113,14 @@
             <td><label for="history-count" lang-text="setting.historyCount"></label></td>
             <td><input id="history-count" type="number" min="0" max="100" step="1"></td>
           </tr>
+          <tr>
+            <td><label for="display-page" lang-text="setting.displayPage"></label></td>
+            <td><input id="display-page" type="checkbox"></td>
+          </tr>
+          <tr>
+            <td><label for="display-time" lang-text="setting.displayTime"></label></td>
+            <td><input id="display-time" type="checkbox"></td>
+          </tr>
         </table>
       </div>
       <div class="dialog-footer">
@@ -120,6 +129,10 @@
       </div>
     </div>
   </div>
+
+  <div id="fs-title"></div>
+  <div id="fs-page"></div>
+  <div id="fs-time"></div>
 
   <script type="module" src="index.js"></script>
 </body>

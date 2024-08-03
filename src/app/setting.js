@@ -9,6 +9,8 @@ const $autoLoadHistory = $("#auto-load-history");
 const $readSubfolder = $("#read-subfolder");
 const $backgroundColor = $("#background-color");
 const $historyCount = $("#history-count");
+const $displayPage = $("#display-page");
+const $displayTime = $("#display-time");
 
 function update() {
   const {
@@ -17,12 +19,16 @@ function update() {
     readSubfolder,
     backgroundColor,
     historyCount,
+    displayPage,
+    displayTime,
   } = model.setting;
   $scrollDelta.value = scrollDelta;
   $autoLoadHistory.checked = autoLoadHistory;
   $readSubfolder.checked = readSubfolder;
   $backgroundColor.value = backgroundColor;
   $historyCount.value = historyCount;
+  $displayPage.checked = displayPage;
+  $displayTime.checked = displayTime;
 }
 
 function forceInt($input) {
@@ -43,6 +49,8 @@ $("#setting-ok").addEventListener("click", () => {
     readSubfolder: $readSubfolder.checked,
     backgroundColor: $backgroundColor.value,
     historyCount: parseInt($historyCount.value),
+    displayPage: $displayPage.checked,
+    displayTime: $displayTime.checked,
   };
   _onChange(setting);
 });

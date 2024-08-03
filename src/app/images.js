@@ -1,5 +1,5 @@
 import model from "./model.js";
-import { throttle } from "./util.js";
+import { $, throttle } from "./util.js";
 import contextmenu from "./contextmenu.js";
 
 let _onIndexChange;
@@ -7,8 +7,8 @@ let _onIndexChange;
 let firstIndex, curIndex, lastIndex, prevScreenHeight;
 let scrollTop;
 
-const $imagesContainer = document.querySelector("#images-container");
-const $images = document.querySelector("#images");
+const $imagesContainer = $("#images-container");
+const $images = $("#images");
 
 // 加载图片
 async function loadImage(index) {
@@ -22,7 +22,7 @@ async function loadImage(index) {
     const img = new Image();
     image.img = img;
     img.setAttribute("data-index", index);
-    img.setAttribute("title", `${index + 1}/${model.total}: ${image.name}`);
+    // img.setAttribute("title", `${index + 1}/${model.total}: ${image.name}`);
     img.addEventListener("load", () => {
       img.width = image.width = img.naturalWidth;
       img.height = image.height = img.naturalHeight;

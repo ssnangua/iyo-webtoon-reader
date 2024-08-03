@@ -2,7 +2,7 @@ import model from "./model.js";
 import menubar from "./menubar.js";
 import { $ } from "./util.js";
 
-let _onIndexChange, _onZoomChange, _onAddTag;
+let _onIndexChange, _onZoomChange, _onAddTag, _onFullscreen;
 
 const $toolbar = $("#toolbar");
 const $tooltip = $("#tooltip");
@@ -228,15 +228,15 @@ $tag.addEventListener("click", () => _onAddTag());
 const win = nw.Window.get();
 function enterFullscreen() {
   win.enterFullscreen();
-  document.body.classList.add("fullscreen");
   nw.App.registerGlobalHotKey(esc);
   menubar.hide();
+  _onFullscreen(true);
 }
 function leaveFullscreen() {
   win.leaveFullscreen();
-  document.body.classList.remove("fullscreen");
   nw.App.unregisterGlobalHotKey(esc);
   menubar.show();
+  _onFullscreen(false);
 }
 const esc = new nw.Shortcut({
   key: "Escape",
@@ -255,6 +255,7 @@ export default {
   onIndexChange: (callback) => (_onIndexChange = callback),
   onZoomChange: (callback) => (_onZoomChange = callback),
   onAddTag: (callback) => (_onAddTag = callback),
+  onFullscreen: (callback) => (_onFullscreen = callback),
   updateSize,
   updateTotal,
   updateIndex,

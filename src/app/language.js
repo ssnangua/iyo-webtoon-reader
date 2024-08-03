@@ -1,7 +1,7 @@
 import model from "./model.js";
 
 export const messages = {
-  en: {
+  "en": {
     languageName: "English",
     appName: "iYo Webtoon Reader",
     menubar: {
@@ -12,6 +12,7 @@ export const messages = {
         showInFileManager: "Show In File Manager",
         addTag: "Add Tag",
         showTagList: "Show Tag List",
+        showChapterList: "Show Chapter List",
         history: "History",
         clear: "Clear",
         setting: "Setting",
@@ -57,9 +58,12 @@ export const messages = {
       readSubfolder: "Read Subfolder",
       backgroundColor: "Background Color",
       historyCount: "History Count",
+      displayPage: "(Fullscreen) Display Page",
+      displayTime: "(Fullscreen) Display Time",
     },
     tags: {
-      title: "Tags",
+      tags: "Tags",
+      chapters: "Chapters",
       add: "Add",
       clear: "Clear",
       tag: "Tag",
@@ -86,6 +90,7 @@ export const messages = {
         showInFileManager: "在文件管理器中显示",
         addTag: "添加书签",
         showTagList: "显示书签列表",
+        showChapterList: "显示章节列表",
         history: "历史",
         clear: "清空",
         setting: "设置",
@@ -132,9 +137,12 @@ export const messages = {
       readSubfolder: "读取子目录",
       backgroundColor: "背景颜色",
       historyCount: "历史数量",
+      displayPage: "（全屏）显示页码",
+      displayTime: "（全屏）显示时间",
     },
     tags: {
-      title: "书签",
+      tags: "书签",
+      chapters: "章节",
       add: "添加",
       clear: "清空",
       tag: "书签",

@@ -1,5 +1,6 @@
 export default {
-  version: "latest",
+  // version: "latest",
+  version: "0.85.0",
   downloadUrl: "https://npmmirror.com/mirrors/nwjs",
   // manifestUrl: "https://nwjs.io/versions",
   cache: true,

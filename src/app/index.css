@@ -44,27 +44,47 @@ body,
   background-color: rgba(0, 0, 0, 0.0001);
   width: 20px;
   z-index: 100;
+  bottom: 20px;
 }
 .fullscreen #tags {
   display: none;
+  bottom: 0;
 }
 .fullscreen #tags.show {
   display: flex !important;
 }
-.fullscreen #tags,
-.fullscreen #tags-hover {
+.fullscreen :is(#tags, #tags-hover) {
   position: absolute;
   left: 0;
   top: 0;
-  bottom: 0;
 }
 .fullscreen #tags-hover {
   display: block;
-  bottom: 20px;
 }
 .fullscreen #tags-close {
   display: none;
 }
+
+.tags-tab {
+  padding: 0 8px;
+  padding-top: 2px;
+  margin-bottom: -5px;
+  z-index: 10;
+  cursor: pointer;
+}
+.type-tags #tags-tags,
+.type-chapters #tags-chapters {
+  background: #fff;
+  border: 1px solid;
+  border-bottom: none;
+}
+.type-chapters :is(#tags-toolbar, [data-type="edit"], [data-type="delete"]) {
+  display: none !important;
+}
+.type-chapters #tags-list {
+  border-bottom: none;
+}
+
 #tags-list {
   flex: auto;
   overflow: auto;
@@ -90,6 +110,12 @@ body,
 }
 .tag-page {
   color: #e6a23c;
+}
+.tag-pad {
+  color: #fff;
+}
+.tag-item:hover .tag-pad {
+  color: #f0f0f0;
 }
 .tag-comment {
   overflow: hidden;
@@ -304,9 +330,11 @@ img {
   padding: 4px;
   display: flex;
   flex-flow: row nowrap;
-  justify-content: space-between;
   background-color: #f0f0f0;
   line-height: 20px;
+  & .icon-close {
+    margin-left: auto;
+  }
 }
 /* .dialog-title {
   font-weight: bold;
@@ -329,6 +357,51 @@ img {
 .dialog-body tr > td:first-child {
   text-align: right;
   padding-right: 10px;
+}
+
+#fs-title {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  z-index: 100;
+  background-color: #000;
+  color: #ccc;
+  padding: 10px;
+  opacity: 0.0001;
+  pointer-events: none;
+}
+.fullscreen #fs-title {
+  pointer-events: all;
+  &:hover {
+    opacity: 1;
+  }
+}
+#fs-page,
+#fs-time {
+  display: none;
+  position: fixed;
+  top: 0;
+  z-index: 99;
+  pointer-events: none;
+  text-align: right;
+  padding: 10px;
+  background-color: #000;
+  color: #333;
+}
+#fs-page {
+  left: 0;
+}
+#fs-time {
+  right: 0;
+}
+.fullscreen {
+  &.fs-page #fs-page {
+    display: block;
+  }
+  &.fs-time #fs-time {
+    display: block;
+  }
 }
 
 .nodata {

@@ -51,6 +51,8 @@ const storage = {
       readSubfolder: true,
       backgroundColor: "#000000",
       historyCount: 10,
+      displayPage: true,
+      displayTime: true,
     }
   ),
   history: new StorageItem("history", [], []),
@@ -65,6 +67,7 @@ const { locale, setting, history } = storage;
 
 export default {
   zoom: 1,
+  isFullscreen: false,
 
   rootPath: "",
   // 图片

@@ -1,6 +1,6 @@
 {
   "name": "iyo-webtoon-reader",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "A simple local webtoon reader | 一个简单的本地条漫阅读器",
   "type": "module",
   "scripts": {

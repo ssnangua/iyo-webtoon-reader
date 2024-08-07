@@ -81,11 +81,20 @@ function clearTags() {
 }
 
 // chapters
+let chapterRule;
+function updateChapterRule() {
+  chapterRule = new RegExp(model.setting.chapterRule, "i");
+  if (showType === "chapters") {
+    generateChapters();
+    updateView();
+  }
+}
+updateChapterRule();
 function generateChapters() {
   const chMap = {};
   chapters = [];
   model.images.forEach((image, index) => {
-    const [, ch] = image.basename.match(/([\d.]+)_(\d+)/) ?? [];
+    const [, ch] = image.basename.match(chapterRule) ?? [];
     const page = index + 1;
     const comment = ch;
     if (ch && !chMap[comment]) {
@@ -201,5 +210,6 @@ export default {
   },
   reset,
   addTag,
+  updateChapterRule,
   onLoadTag: (callback) => (_onLoadTag = callback),
 };

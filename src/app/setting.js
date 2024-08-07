@@ -9,6 +9,7 @@ const $autoLoadHistory = $("#auto-load-history");
 const $readSubfolder = $("#read-subfolder");
 const $backgroundColor = $("#background-color");
 const $historyCount = $("#history-count");
+const $chapterRule = $("#chapter-rule");
 const $displayPage = $("#display-page");
 const $displayTime = $("#display-time");
 
@@ -19,6 +20,7 @@ function update() {
     readSubfolder,
     backgroundColor,
     historyCount,
+    chapterRule,
     displayPage,
     displayTime,
   } = model.setting;
@@ -27,6 +29,7 @@ function update() {
   $readSubfolder.checked = readSubfolder;
   $backgroundColor.value = backgroundColor;
   $historyCount.value = historyCount;
+  $chapterRule.value = chapterRule;
   $displayPage.checked = displayPage;
   $displayTime.checked = displayTime;
 }
@@ -49,6 +52,7 @@ $("#setting-ok").addEventListener("click", () => {
     readSubfolder: $readSubfolder.checked,
     backgroundColor: $backgroundColor.value,
     historyCount: parseInt($historyCount.value),
+    chapterRule: $chapterRule.value,
     displayPage: $displayPage.checked,
     displayTime: $displayTime.checked,
   };

@@ -58,6 +58,7 @@ applySetting(model.setting);
 setting.onChange((setting) => {
   model.setting = setting;
   applySetting();
+  tags.updateChapterRule();
 });
 
 // 菜单栏

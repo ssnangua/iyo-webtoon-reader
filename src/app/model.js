@@ -50,6 +50,7 @@ const storage = {
       autoLoadHistory: true,
       readSubfolder: true,
       backgroundColor: "#000000",
+      chapterRule: "([\\d.-]+)_\\d+",
       historyCount: 10,
       displayPage: true,
       displayTime: true,

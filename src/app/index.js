@@ -7,7 +7,7 @@ import contextmenu from "./contextmenu.js";
 import setting from "./setting.js";
 import tags from "./tags.js";
 import time from "./time.js";
-import { $, $$ } from "./util.js";
+import { $, $$, dialog } from "./util.js";
 import { $t } from "./language.js";
 
 const path = require("path");
@@ -283,7 +283,7 @@ function stopScroll() {
 
 // 按键
 window.addEventListener("keydown", (e) => {
-  if (e.repeat) return;
+  if (e.repeat || dialog.showCount > 0) return;
   // console.log(e);
   if (e.code === "ArrowUp") {
     startScroll(-10);

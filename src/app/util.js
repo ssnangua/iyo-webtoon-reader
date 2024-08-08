@@ -24,6 +24,7 @@ export function throttle(fn, delay) {
 
 // dialog
 export const dialog = {
+  showCount: 0,
   visible: {},
   isOpen(el) {
     return this.visible[$(el)] === true;
@@ -32,16 +33,19 @@ export const dialog = {
     this.closeAll();
     $(el).classList.remove("hide");
     this.visible[$(el)] = true;
+    this.showCount++;
   },
   close(el) {
     $(el).classList.add("hide");
     this.visible[$(el)] = false;
+    this.showCount--;
   },
   closeAll() {
     $$(".dialog-modal").forEach((dialog) => {
       dialog.classList.add("hide");
       this.visible[dialog] = false;
     });
+    this.showCount = 0;
   },
 };
 $$("[dialog-close]").forEach((btn) => {
